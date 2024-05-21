@@ -1,46 +1,14 @@
 <?php
 session_start();
 
-if (isset ($_SESSION['login_user'])) {
+if (isset($_SESSION['admin_user'])) {
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
     if (!$conn) {
-        die ("Connection failed:" . mysqli_connect_error());
+        die("Connection failed: " . mysqli_connect_error());
     }
 
-    $email = $_SESSION['login_user'];
-    $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
-    $fetch_stmt = $conn->prepare($fetch_query);
-    $fetch_stmt->bind_param("s", $email);
-    $fetch_stmt->execute();
-    $fetch_stmt->store_result();
-    $fetch_stmt->bind_result($user_id);
-    $fetch_stmt->fetch();
-
-    $sql = "SELECT * FROM sale WHERE UID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $data = array();
-
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
-    }
-
-    mysqli_close($conn);
-
-} elseif (isset ($_SESSION['admin_user'])) {
-    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
-
-    if (!$conn) {
-        die ("Connection failed: " . mysqli_connect_error());
-    }
-
-    $is_admin = isset ($_SESSION['admin_user']);
+    $is_admin = isset($_SESSION['admin_user']);
 
     $email = $_SESSION['admin_user'];
     $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
@@ -50,7 +18,7 @@ if (isset ($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM sale";
+    $sql = "SELECT * FROM store";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -73,7 +41,7 @@ if (isset ($_SESSION['login_user'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>List Sale | ManageMatic | Store Management System</title>
+    <title>List User | ManageMatic | Store Management System</title>
 
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
     <link rel="stylesheet" href="../assets/css/backend-plugin.min.css">
@@ -81,7 +49,6 @@ if (isset ($_SESSION['login_user'])) {
     <link rel="stylesheet" href="../assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
     <link rel="stylesheet" href="../assets/vendor/remixicon/fonts/remixicon.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
 </head>
 
 <body class="  ">
@@ -105,7 +72,7 @@ if (isset ($_SESSION['login_user'])) {
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="iq-menu">
                         <li class="active">
-                            <a href="../backend/dashboard.php" class="svg-icon">
+                            <a href="../backend/index1.php" class="svg-icon">
                                 <svg class="svg-icon" id="p-dash1" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -342,22 +309,20 @@ if (isset ($_SESSION['login_user'])) {
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.php">
+                                    <a href="#">
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
-                                <?php if ($is_admin): ?>
-                                    <li class="">
-                                        <a href="../app/user-add.php">
-                                            <i class="las la-minus"></i><span>User Add</span>
-                                        </a>
-                                    </li>
-                                    <li class="">
-                                        <a href="../app/user-list.php">
-                                            <i class="las la-minus"></i><span>User List</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
+                                <li class="">
+                                    <a href="../app/user-add.php">
+                                        <i class="las la-minus"></i><span>User Add</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="../app/user-list.php">
+                                        <i class="las la-minus"></i><span>User List</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="">
@@ -390,7 +355,7 @@ if (isset ($_SESSION['login_user'])) {
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
-                        <a href="../backend/dashboard.php" class="header-logo">
+                        <a href="../backend/index.html" class="header-logo">
                             <img src="../assets/images/logo.png" class="img-fluid rounded-normal" alt="logo">
                             <h5 class="logo-title ml-3">ManageMatic</h5>
                         </a>
@@ -434,8 +399,7 @@ if (isset ($_SESSION['login_user'])) {
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.php"
-                                                            class="btn border mr-2">Profile</a>
+                                                        <a href="#" class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
                                                 </div>
@@ -452,84 +416,108 @@ if (isset ($_SESSION['login_user'])) {
         <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-                            <div>
-                                <h4 class="mb-3">Sale List</h4>
-                                <p class="mb-0">Sales enables you to effectively control sales KPIs and monitor them in
-                                    one central<br>
-                                    place while helping teams to reach sales goals. </p>
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">User List</h4>
+                                </div>
                             </div>
-                            <a href="page-add-sale.php" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Add Sale</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="table-responsive rounded mb-3">
-                            <table class="data-table table mb-0 tbl-server-info">
-                                <thead class="bg-white text-uppercase">
-                                    <tr class="ligth ligth-data">
-                                        <th>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                                <label for="checkbox1" class="mb-0"></label>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <div class="row justify-content-between">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div id="user_list_datatable_info" class="dataTables_filter">
+                                                <form class="mr-3 position-relative">
+                                                    <div class="form-group mb-0">
+                                                        <input type="search" class="form-control"
+                                                            id="exampleInputSearch" placeholder="Search"
+                                                            aria-controls="user-list-table">
+                                                    </div>
+                                                </form>
                                             </div>
-                                        </th>
-                                        <th>Date</th>
-                                        <th>Product</th>
-                                        <th>Customer</th>
-                                        <th>Total</th>
-                                        <th>Paid</th>
-                                        <th>Status</th>
-                                        <th>Biller</th>
-                                        <th>Tax</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <?php
-                                if (!empty ($data)) {
-                                    echo '<tbody class="ligth-body">';
-                                    foreach ($data as $row) {
-                                        echo '<tr>';
-                                        echo '<td>';
-                                        echo '<div class="checkbox d-inline-block">';
-                                        echo '<input type="checkbox" class="checkbox-input" id="checkbox2">';
-                                        echo '<label for="checkbox2" class="mb-0"></label>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['SLDATE'] . '</td>';
-                                        echo '<td>' . $row['SLPRODUCT'] . '</td>';
-                                        echo '<td>' . $row['SLCUSTOMER'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="badge badge-success">' . $row['SLPAYSTATUS'] . '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['SLBILLER'] . '</td>';
-                                        echo '<td>' . $row['SLTAX'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="d-flex align-items-center list-action">';
-                                        echo '<a class="badge badge-info mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="View" href="#"><i
-                                            class="ri-eye-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-success mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Edit" href="#"><i
-                                            class="ri-pencil-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-warning mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Delete"
-                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '</tr>';
-                                    }
-                                    echo '</tbody>';
-                                    echo '</table>';
-                                } else {
-                                    echo 'No data found';
-                                }
-                                ?>
-                                </tbody>
-                            </table>
+                                        </div>
+                                        <!--<div class="col-sm-6 col-md-6">
+                                            <div class="user-list-files d-flex">
+                                                <a class="bg-primary" href="javascript:void();">
+                                                    Print
+                                                </a>
+                                                <a class="bg-primary" href="javascript:void();">
+                                                    Excel
+                                                </a>
+                                                <a class="bg-primary" href="javascript:void();">
+                                                    Pdf
+                                                </a>
+                                            </div>
+                                        </div>-->
+                                    </div>
+                                    <table id="user-list-table" class="table table-striped dataTable mt-4" role="grid"
+                                        aria-describedby="user-list-page-info">
+                                        <thead>
+                                            <tr class="ligth">
+                                                <!--<th>Profile</th>-->
+                                                <th>Name</th>
+                                                <th>Store Name</th>
+                                                <th>Contact</th>
+                                                <th>Email</th>
+                                                <th>B'Date</th>
+                                                <th>Address</th>
+                                                <th style="min-width: 100px">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <?php if (!empty($data)): ?>
+                                            <tbody>
+                                                <?php foreach ($data as $row): ?>
+                                                    <tr>
+                                                        <!--<td class="text-center"><img class="rounded img-fluid avatar-40"
+                                                        src="../assets/images/user/01.jpg" alt="profile"></td>-->
+                                                        <?php echo '<td>' . $row['SNAME'] . '</td>';
+                                                        echo '<td>' . $row['STNAME'] . '</td>';
+                                                        echo '<td>' . $row['SPHONE'] . '</td>';
+                                                        echo '<td>' . $row['SEMAIL'] . '</td>';
+                                                        echo '<td>' . $row['SBDATE'] . '</td>';
+                                                        echo '<td>' . $row['SADDRESS'] . '</td>'; ?>
+                                                        <td>
+                                                            <div class="flex align-items-center list-user-action">
+                                                                <a class="btn btn-sm bg-primary" data-toggle="tooltip"
+                                                                    data-placement="top" title="" data-original-title="Add"
+                                                                    href="#"><i class="ri-user-add-line mr-0"></i></a>
+                                                                <a class="btn btn-sm bg-primary" data-toggle="tooltip"
+                                                                    data-placement="top" title="" data-original-title="Edit"
+                                                                    href="#"><i class="ri-pencil-line mr-0"></i></a>
+                                                                <a class="btn btn-sm bg-primary" data-toggle="tooltip"
+                                                                    data-placement="top" title="" data-original-title="Delete"
+                                                                    href="#"><i class="ri-delete-bin-line mr-0"></i></a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    <?php endif; ?>
+                                </div>
+                                <!--<div class="row justify-content-between mt-3">
+                                    <div id="user-list-page-info" class="col-md-6">
+                                        <span>Showing 1 to 5 of 5 entries</span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Page navigation example">
+                                            <ul class="pagination justify-content-end mb-0">
+                                                <li class="page-item disabled">
+                                                    <a class="page-link" href="#" tabindex="-1"
+                                                        aria-disabled="true">Previous</a>
+                                                </li>
+                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#">Next</a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>-->
+                            </div>
                         </div>
                     </div>
                 </div>

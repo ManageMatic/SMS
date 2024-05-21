@@ -1,9 +1,9 @@
-(function(jQuery) {
+(function (jQuery) {
 
-    "use strict";
+  "use strict";
 
-// for apexchart
-function apexChartUpdate(chart, detail) {
+  // for apexchart
+  function apexChartUpdate(chart, detail) {
     let color = getComputedStyle(document.documentElement).getPropertyValue('--dark');
     if (detail.dark) {
       color = getComputedStyle(document.documentElement).getPropertyValue('--white');
@@ -14,56 +14,99 @@ function apexChartUpdate(chart, detail) {
       }
     })
   }
-  
-// for am chart
-function amChartUpdate(chart, detail) {
-  // let color = getComputedStyle(document.documentElement).getPropertyValue('--dark');
-  if (detail.dark) {
-    // color = getComputedStyle(document.documentElement).getPropertyValue('--white');
-    chart.stroke = am4core.color(getComputedStyle(document.documentElement).getPropertyValue('--white'));
-  }
-  chart.validateData();
-}
 
-/*---------------------------------------------------------------------
-   Apex Charts
------------------------------------------------------------------------*/
-if (jQuery("#apex-basic").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "line",
-      zoom: {
-        enabled: !1
-      }
-    },
-    colors: ["#4788ff"],
-    series: [{
-      name: "Desktops",
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-    }],
-    dataLabels: {
-      enabled: !1
-    },
-    stroke: {
-      curve: "straight"
-    },
-    title: {
-      text: "Product Trends by Month",
-      align: "left"
-    },
-    grid: {
-      row: {
-        colors: ["#f3f3f3", "transparent"],
-        opacity: .5
-      }
-    },
-    xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+  // for am chart
+  function amChartUpdate(chart, detail) {
+    // let color = getComputedStyle(document.documentElement).getPropertyValue('--dark');
+    if (detail.dark) {
+      // color = getComputedStyle(document.documentElement).getPropertyValue('--white');
+      chart.stroke = am4core.color(getComputedStyle(document.documentElement).getPropertyValue('--white'));
     }
-  };
-  if(typeof ApexCharts !== typeof undefined){
-    (chart = new ApexCharts(document.querySelector("#apex-basic"), options)).render()
+    chart.validateData();
+  }
+
+  /*---------------------------------------------------------------------
+     Apex Charts
+  -----------------------------------------------------------------------*/
+  if (jQuery("#apex-basic").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "line",
+        zoom: {
+          enabled: !1
+        }
+      },
+      colors: ["#4788ff"],
+      series: [{
+        name: "Desktops",
+        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+      }],
+      dataLabels: {
+        enabled: !1
+      },
+      stroke: {
+        curve: "straight"
+      },
+      title: {
+        text: "Product Trends by Month",
+        align: "left"
+      },
+      grid: {
+        row: {
+          colors: ["#f3f3f3", "transparent"],
+          opacity: .5
+        }
+      },
+      xaxis: {
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
+      }
+    };
+    if (typeof ApexCharts !== typeof undefined) {
+      (chart = new ApexCharts(document.querySelector("#apex-basic"), options)).render()
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        apexChartUpdate(chart, {
+          dark: true
+        })
+      }
+
+      document.addEventListener('ChangeColorMode', function (e) {
+        apexChartUpdate(chart, e.detail)
+      })
+    }
+  }
+  if (jQuery("#apex-line-area").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "area"
+      },
+      dataLabels: {
+        enabled: !1
+      },
+      stroke: {
+        curve: "smooth"
+      },
+      colors: ["#4788ff", "#ff4b4b"],
+      series: [{
+        name: "series1",
+        data: [31, 40, 28, 51, 42, 109, 100]
+      }, {
+        name: "series2",
+        data: [11, 32, 45, 32, 34, 52, 41]
+      }],
+      xaxis: {
+        type: "datetime",
+        categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"]
+      },
+      tooltip: {
+        x: {
+          format: "dd/MM/yy HH:mm"
+        }
+      }
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-line-area"), options)).render()
     const body = document.querySelector('body')
     if (body.classList.contains('dark')) {
       apexChartUpdate(chart, {
@@ -75,895 +118,852 @@ if (jQuery("#apex-basic").length) {
       apexChartUpdate(chart, e.detail)
     })
   }
-}
-if (jQuery("#apex-line-area").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "area"
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    stroke: {
-      curve: "smooth"
-    },
-    colors: ["#4788ff", "#ff4b4b"],
-    series: [{
-      name: "series1",
-      data: [31, 40, 28, 51, 42, 109, 100]
-    }, {
-      name: "series2",
-      data: [11, 32, 45, 32, 34, 52, 41]
-    }],
-    xaxis: {
-      type: "datetime",
-      categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"]
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm"
-      }
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-line-area"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-bar").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "bar"
-    },
-    plotOptions: {
-      bar: {
-        horizontal: !0
-      }
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    colors: ["#4788ff"],
-    series: [{
-      data: [470, 540, 580, 690, 1100, 1200, 1380]
-    }],
-    xaxis: {
-      categories: ["Netherlands", "Italy", "France", "Japan", "United States", "China", "Germany"]
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-bar"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-column").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "bar"
-    },
-    plotOptions: {
-      bar: {
-        horizontal: !1,
-        columnWidth: "55%",
-        endingShape: "rounded"
-      }
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    stroke: {
-      show: !0,
-      width: 2,
-      colors: ["transparent"]
-    },
-    colors: ["#4788ff", "#37e6b0", "#ff4b4b"],
-    series: [{
-      name: "Net Profit",
-      data: [44, 55, 57, 56, 61, 58]
-    }, {
-      name: "Revenue",
-      data: [76, 85, 101, 98, 87, 105]
-    }, {
-      name: "Free Cash Flow",
-      data: [35, 41, 36, 26, 45, 48]
-    }],
-    xaxis: {
-      categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"]
-    },
-    yaxis: {
-      title: {
-        text: "$ (thousands)"
-      }
-    },
-    fill: {
-      opacity: 1
-    },
-    tooltip: {
-      y: {
-        formatter: function(e) {
-          return "$ " + e + " thousands"
-        }
-      }
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-column"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-mixed-chart").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "line",
-      stacked: !1
-    },
-    stroke: {
-      width: [0, 2, 5],
-      curve: "smooth"
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "50%"
-      }
-    },
-    colors: ["#ff4b4b", "#37e6b0", "#4788ff"],
-    series: [{
-      name: "Facebook",
-      type: "column",
-      data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
-    }, {
-      name: "Vine",
-      type: "area",
-      data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-    }, {
-      name: "Dribbble",
-      type: "line",
-      data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
-    }],
-    fill: {
-      opacity: [.85, .25, 1],
-      gradient: {
-        inverseColors: !1,
-        shade: "light",
-        type: "vertical",
-        opacityFrom: .85,
-        opacityTo: .55,
-        stops: [0, 100, 100, 100]
-      }
-    },
-    labels: ["01/01/2003", "02/01/2003", "03/01/2003", "04/01/2003", "05/01/2003", "06/01/2003", "07/01/2003", "08/01/2003", "09/01/2003", "10/01/2003", "11/01/2003"],
-    markers: {
-      size: 0
-    },
-    xaxis: {
-      type: "datetime"
-    },
-    yaxis: {
-      min: 0
-    },
-    tooltip: {
-      shared: !0,
-      intersect: !1,
-      y: {
-        formatter: function(e) {
-          return void 0 !== e ? e.toFixed(0) + " views" : e
-        }
-      }
-    },
-    legend: {
-      labels: {
-        useSeriesColors: !0
+  if (jQuery("#apex-bar").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "bar"
       },
-      markers: {
-        customHTML: [function() {
-          return ""
-        }, function() {
-          return ""
-        }, function() {
-          return ""
-        }]
-      }
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-mixed-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-candlestick-chart").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "candlestick"
-    },
-    colors: ["#4788ff", "#37e6b0", "#37e6b0"],
-    series: [{
-      data: [{
-        x: new Date(15387786e5),
-        y: [6629.81, 6650.5, 6623.04, 6633.33]
-      }, {
-        x: new Date(15387804e5),
-        y: [6632.01, 6643.59, 6620, 6630.11]
-      }, {
-        x: new Date(15387822e5),
-        y: [6630.71, 6648.95, 6623.34, 6635.65]
-      }, {
-        x: new Date(1538784e6),
-        y: [6635.65, 6651, 6629.67, 6638.24]
-      }, {
-        x: new Date(15387858e5),
-        y: [6638.24, 6640, 6620, 6624.47]
-      }, {
-        x: new Date(15387876e5),
-        y: [6624.53, 6636.03, 6621.68, 6624.31]
-      }, {
-        x: new Date(15387894e5),
-        y: [6624.61, 6632.2, 6617, 6626.02]
-      }, {
-        x: new Date(15387912e5),
-        y: [6627, 6627.62, 6584.22, 6603.02]
-      }, {
-        x: new Date(1538793e6),
-        y: [6605, 6608.03, 6598.95, 6604.01]
-      }, {
-        x: new Date(15387948e5),
-        y: [6604.5, 6614.4, 6602.26, 6608.02]
-      }, {
-        x: new Date(15387966e5),
-        y: [6608.02, 6610.68, 6601.99, 6608.91]
-      }, {
-        x: new Date(15387984e5),
-        y: [6608.91, 6618.99, 6608.01, 6612]
-      }, {
-        x: new Date(15388002e5),
-        y: [6612, 6615.13, 6605.09, 6612]
-      }, {
-        x: new Date(1538802e6),
-        y: [6612, 6624.12, 6608.43, 6622.95]
-      }, {
-        x: new Date(15388038e5),
-        y: [6623.91, 6623.91, 6615, 6615.67]
-      }, {
-        x: new Date(15388056e5),
-        y: [6618.69, 6618.74, 6610, 6610.4]
-      }, {
-        x: new Date(15388074e5),
-        y: [6611, 6622.78, 6610.4, 6614.9]
-      }, {
-        x: new Date(15388092e5),
-        y: [6614.9, 6626.2, 6613.33, 6623.45]
-      }, {
-        x: new Date(1538811e6),
-        y: [6623.48, 6627, 6618.38, 6620.35]
-      }, {
-        x: new Date(15388128e5),
-        y: [6619.43, 6620.35, 6610.05, 6615.53]
-      }, {
-        x: new Date(15388146e5),
-        y: [6615.53, 6617.93, 6610, 6615.19]
-      }, {
-        x: new Date(15388164e5),
-        y: [6615.19, 6621.6, 6608.2, 6620]
-      }, {
-        x: new Date(15388182e5),
-        y: [6619.54, 6625.17, 6614.15, 6620]
-      }, {
-        x: new Date(153882e7),
-        y: [6620.33, 6634.15, 6617.24, 6624.61]
-      }, {
-        x: new Date(15388218e5),
-        y: [6625.95, 6626, 6611.66, 6617.58]
-      }, {
-        x: new Date(15388236e5),
-        y: [6619, 6625.97, 6595.27, 6598.86]
-      }, {
-        x: new Date(15388254e5),
-        y: [6598.86, 6598.88, 6570, 6587.16]
-      }, {
-        x: new Date(15388272e5),
-        y: [6588.86, 6600, 6580, 6593.4]
-      }, {
-        x: new Date(1538829e6),
-        y: [6593.99, 6598.89, 6585, 6587.81]
-      }, {
-        x: new Date(15388308e5),
-        y: [6587.81, 6592.73, 6567.14, 6578]
-      }, {
-        x: new Date(15388326e5),
-        y: [6578.35, 6581.72, 6567.39, 6579]
-      }, {
-        x: new Date(15388344e5),
-        y: [6579.38, 6580.92, 6566.77, 6575.96]
-      }, {
-        x: new Date(15388362e5),
-        y: [6575.96, 6589, 6571.77, 6588.92]
-      }, {
-        x: new Date(1538838e6),
-        y: [6588.92, 6594, 6577.55, 6589.22]
-      }, {
-        x: new Date(15388398e5),
-        y: [6589.3, 6598.89, 6589.1, 6596.08]
-      }, {
-        x: new Date(15388416e5),
-        y: [6597.5, 6600, 6588.39, 6596.25]
-      }, {
-        x: new Date(15388434e5),
-        y: [6598.03, 6600, 6588.73, 6595.97]
-      }, {
-        x: new Date(15388452e5),
-        y: [6595.97, 6602.01, 6588.17, 6602]
-      }, {
-        x: new Date(1538847e6),
-        y: [6602, 6607, 6596.51, 6599.95]
-      }, {
-        x: new Date(15388488e5),
-        y: [6600.63, 6601.21, 6590.39, 6591.02]
-      }, {
-        x: new Date(15388506e5),
-        y: [6591.02, 6603.08, 6591, 6591]
-      }, {
-        x: new Date(15388524e5),
-        y: [6591, 6601.32, 6585, 6592]
-      }, {
-        x: new Date(15388542e5),
-        y: [6593.13, 6596.01, 6590, 6593.34]
-      }, {
-        x: new Date(1538856e6),
-        y: [6593.34, 6604.76, 6582.63, 6593.86]
-      }, {
-        x: new Date(15388578e5),
-        y: [6593.86, 6604.28, 6586.57, 6600.01]
-      }, {
-        x: new Date(15388596e5),
-        y: [6601.81, 6603.21, 6592.78, 6596.25]
-      }, {
-        x: new Date(15388614e5),
-        y: [6596.25, 6604.2, 6590, 6602.99]
-      }, {
-        x: new Date(15388632e5),
-        y: [6602.99, 6606, 6584.99, 6587.81]
-      }, {
-        x: new Date(1538865e6),
-        y: [6587.81, 6595, 6583.27, 6591.96]
-      }, {
-        x: new Date(15388668e5),
-        y: [6591.97, 6596.07, 6585, 6588.39]
-      }, {
-        x: new Date(15388686e5),
-        y: [6587.6, 6598.21, 6587.6, 6594.27]
-      }, {
-        x: new Date(15388704e5),
-        y: [6596.44, 6601, 6590, 6596.55]
-      }, {
-        x: new Date(15388722e5),
-        y: [6598.91, 6605, 6596.61, 6600.02]
-      }, {
-        x: new Date(1538874e6),
-        y: [6600.55, 6605, 6589.14, 6593.01]
-      }, {
-        x: new Date(15388758e5),
-        y: [6593.15, 6605, 6592, 6603.06]
-      }]
-    }],
-    title: {
-      text: "CandleStick Chart",
-      align: "left"
-    },
-    xaxis: {
-      type: "datetime"
-    },
-    yaxis: {
-      tooltip: {
-        enabled: !0
-      }
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-candlestick-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-bubble-chart").length) {
-  function generateData(e, t, a) {
-    for (var n = 0, o = []; n < t;) {
-      var r = Math.floor(Math.random() * (a.max - a.min + 1)) + a.min,
-        i = Math.floor(61 * Math.random()) + 15;
-      o.push([e, r, i]), e += 864e5, n++
-    }
-    return o
-  }
-  options = {
-    chart: {
-      height: 350,
-      type: "bubble"
-    },
-    dataLabels: {
-      enabled: !1
-    },
-    series: [{
-      name: "Product1",
-      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
-        min: 10,
-        max: 40
-      })
-    }, {
-      name: "Product2",
-      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
-        min: 10,
-        max: 40
-      })
-    }, {
-      name: "Product3",
-      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
-        min: 10,
-        max: 40
-      })
-    }],
-    fill: {
-      type: "gradient"
-    },
-    colors: ["#4788ff", "#37e6b0", "#37e6b0"],
-    title: {
-      text: "3D Bubble Chart"
-    },
-    xaxis: {
-      tickAmount: 12,
-      type: "datetime",
-      labels: {
-        rotate: 0
-      }
-    },
-    yaxis: {
-      max: 40
-    },
-    theme: {
-      palette: "palette2"
-    }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-bubble-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-scatter-chart").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "scatter",
-      zoom: {
-        enabled: !0,
-        type: "xy"
-      }
-    },
-    colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
-    series: [{
-      name: "SAMPLE A",
-      data: [
-        [16.4, 5.4],
-        [21.7, 2],
-        [10.9, 0],
-        [10.9, 8.2],
-        [16.4, 0],
-        [16.4, 1.8],
-        [13.6, .3],
-        [13.6, 0],
-        [29.9, 0],
-        [27.1, 2.3],
-        [16.4, 0],
-        [13.6, 3.7],
-        [10.9, 5.2],
-        [16.4, 6.5],
-        [10.9, 0],
-        [24.5, 7.1],
-        [10.9, 0],
-        [8.1, 4.7]
-      ]
-    }, {
-      name: "SAMPLE B",
-      data: [
-        [36.4, 13.4],
-        [1.7, 11],
-        [1.9, 9],
-        [1.9, 13.2],
-        [1.4, 7],
-        [6.4, 8.8],
-        [3.6, 4.3],
-        [1.6, 10],
-        [9.9, 2],
-        [7.1, 15],
-        [1.4, 0],
-        [3.6, 13.7],
-        [1.9, 15.2],
-        [6.4, 16.5],
-        [.9, 10],
-        [4.5, 17.1],
-        [10.9, 10],
-        [.1, 14.7]
-      ]
-    }, {
-      name: "SAMPLE C",
-      data: [
-        [21.7, 3],
-        [23.6, 3.5],
-        [28, 4],
-        [27.1, .3],
-        [16.4, 4],
-        [13.6, 0],
-        [19, 5],
-        [22.4, 3],
-        [24.5, 3],
-        [32.6, 3],
-        [27.1, 4],
-        [29.6, 6],
-        [31.6, 8],
-        [21.6, 5],
-        [20.9, 4],
-        [22.4, 0],
-        [32.6, 10.3],
-        [29.7, 20.8]
-      ]
-    }],
-    xaxis: {
-      tickAmount: 5,
-      labels: {
-        formatter: function(e) {
-          return parseFloat(e).toFixed(1)
+      plotOptions: {
+        bar: {
+          horizontal: !0
         }
+      },
+      dataLabels: {
+        enabled: !1
+      },
+      colors: ["#4788ff"],
+      series: [{
+        data: [470, 540, 580, 690, 1100, 1200, 1380]
+      }],
+      xaxis: {
+        categories: ["Netherlands", "Italy", "France", "Japan", "United States", "China", "Germany"]
       }
-    },
-    yaxis: {
-      tickAmount: 5
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-bar"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
     }
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-scatter-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-radialbar-chart").length) {
-  options = {
-    chart: {
-      height: 350,
-      type: "radialBar"
-    },
-    plotOptions: {
-      radialBar: {
-        dataLabels: {
-          name: {
-            fontSize: "22px"
-          },
-          value: {
-            fontSize: "16px"
-          },
-          total: {
-            show: !0,
-            label: "Total",
-            formatter: function(e) {
-              return 249
-            }
+  if (jQuery("#apex-column").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "bar"
+      },
+      plotOptions: {
+        bar: {
+          horizontal: !1,
+          columnWidth: "55%",
+          endingShape: "rounded"
+        }
+      },
+      dataLabels: {
+        enabled: !1
+      },
+      stroke: {
+        show: !0,
+        width: 2,
+        colors: ["transparent"]
+      },
+      colors: ["#4788ff", "#37e6b0", "#ff4b4b"],
+      series: [{
+        name: "Net Profit",
+        data: [44, 55, 57, 56, 61, 58]
+      }, {
+        name: "Revenue",
+        data: [76, 85, 101, 98, 87, 105]
+      }, {
+        name: "Free Cash Flow",
+        data: [35, 41, 36, 26, 45, 48]
+      }],
+      xaxis: {
+        categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+      },
+      yaxis: {
+        title: {
+          text: "$ (thousands)"
+        }
+      },
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (e) {
+            return "$ " + e + " thousands"
           }
         }
       }
-    },
-    series: [44, 55, 67, 83],
-    labels: ["Apples", "Oranges", "Bananas", "Berries"],
-    colors: ["#4788ff", "#ff4b4b", "#876cfe", "#37e6b0"]
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-radialbar-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-column"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#apex-pie-chart").length) {
-  options = {
-    chart: {
-      width: 380,
-      type: "pie"
-    },
-    labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
-    series: [44, 55, 13, 43, 22],
-    colors: ["#4788ff", "#ff4b4b", "#876cfe", "#37e6b0", "#c8c8c8"],
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200
+  if (jQuery("#apex-mixed-chart").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "line",
+        stacked: !1
+      },
+      stroke: {
+        width: [0, 2, 5],
+        curve: "smooth"
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "50%"
+        }
+      },
+      colors: ["#ff4b4b", "#37e6b0", "#4788ff"],
+      series: [{
+        name: "Facebook",
+        type: "column",
+        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
+      }, {
+        name: "Vine",
+        type: "area",
+        data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
+      }, {
+        name: "Dribbble",
+        type: "line",
+        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
+      }],
+      fill: {
+        opacity: [.85, .25, 1],
+        gradient: {
+          inverseColors: !1,
+          shade: "light",
+          type: "vertical",
+          opacityFrom: .85,
+          opacityTo: .55,
+          stops: [0, 100, 100, 100]
+        }
+      },
+      labels: ["01/01/2003", "02/01/2003", "03/01/2003", "04/01/2003", "05/01/2003", "06/01/2003", "07/01/2003", "08/01/2003", "09/01/2003", "10/01/2003", "11/01/2003"],
+      markers: {
+        size: 0
+      },
+      xaxis: {
+        type: "datetime"
+      },
+      yaxis: {
+        min: 0
+      },
+      tooltip: {
+        shared: !0,
+        intersect: !1,
+        y: {
+          formatter: function (e) {
+            return void 0 !== e ? e.toFixed(0) + " views" : e
+          }
+        }
+      },
+      legend: {
+        labels: {
+          useSeriesColors: !0
         },
-        legend: {
-          position: "bottom"
+        markers: {
+          customHTML: [function () {
+            return ""
+          }, function () {
+            return ""
+          }, function () {
+            return ""
+          }]
         }
       }
-    }]
-  };
-  (chart = new ApexCharts(document.querySelector("#apex-pie-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-mixed-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
+  if (jQuery("#apex-candlestick-chart").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "candlestick"
+      },
+      colors: ["#4788ff", "#37e6b0", "#37e6b0"],
+      series: [{
+        data: [{
+          x: new Date(15387786e5),
+          y: [6629.81, 6650.5, 6623.04, 6633.33]
+        }, {
+          x: new Date(15387804e5),
+          y: [6632.01, 6643.59, 6620, 6630.11]
+        }, {
+          x: new Date(15387822e5),
+          y: [6630.71, 6648.95, 6623.34, 6635.65]
+        }, {
+          x: new Date(1538784e6),
+          y: [6635.65, 6651, 6629.67, 6638.24]
+        }, {
+          x: new Date(15387858e5),
+          y: [6638.24, 6640, 6620, 6624.47]
+        }, {
+          x: new Date(15387876e5),
+          y: [6624.53, 6636.03, 6621.68, 6624.31]
+        }, {
+          x: new Date(15387894e5),
+          y: [6624.61, 6632.2, 6617, 6626.02]
+        }, {
+          x: new Date(15387912e5),
+          y: [6627, 6627.62, 6584.22, 6603.02]
+        }, {
+          x: new Date(1538793e6),
+          y: [6605, 6608.03, 6598.95, 6604.01]
+        }, {
+          x: new Date(15387948e5),
+          y: [6604.5, 6614.4, 6602.26, 6608.02]
+        }, {
+          x: new Date(15387966e5),
+          y: [6608.02, 6610.68, 6601.99, 6608.91]
+        }, {
+          x: new Date(15387984e5),
+          y: [6608.91, 6618.99, 6608.01, 6612]
+        }, {
+          x: new Date(15388002e5),
+          y: [6612, 6615.13, 6605.09, 6612]
+        }, {
+          x: new Date(1538802e6),
+          y: [6612, 6624.12, 6608.43, 6622.95]
+        }, {
+          x: new Date(15388038e5),
+          y: [6623.91, 6623.91, 6615, 6615.67]
+        }, {
+          x: new Date(15388056e5),
+          y: [6618.69, 6618.74, 6610, 6610.4]
+        }, {
+          x: new Date(15388074e5),
+          y: [6611, 6622.78, 6610.4, 6614.9]
+        }, {
+          x: new Date(15388092e5),
+          y: [6614.9, 6626.2, 6613.33, 6623.45]
+        }, {
+          x: new Date(1538811e6),
+          y: [6623.48, 6627, 6618.38, 6620.35]
+        }, {
+          x: new Date(15388128e5),
+          y: [6619.43, 6620.35, 6610.05, 6615.53]
+        }, {
+          x: new Date(15388146e5),
+          y: [6615.53, 6617.93, 6610, 6615.19]
+        }, {
+          x: new Date(15388164e5),
+          y: [6615.19, 6621.6, 6608.2, 6620]
+        }, {
+          x: new Date(15388182e5),
+          y: [6619.54, 6625.17, 6614.15, 6620]
+        }, {
+          x: new Date(153882e7),
+          y: [6620.33, 6634.15, 6617.24, 6624.61]
+        }, {
+          x: new Date(15388218e5),
+          y: [6625.95, 6626, 6611.66, 6617.58]
+        }, {
+          x: new Date(15388236e5),
+          y: [6619, 6625.97, 6595.27, 6598.86]
+        }, {
+          x: new Date(15388254e5),
+          y: [6598.86, 6598.88, 6570, 6587.16]
+        }, {
+          x: new Date(15388272e5),
+          y: [6588.86, 6600, 6580, 6593.4]
+        }, {
+          x: new Date(1538829e6),
+          y: [6593.99, 6598.89, 6585, 6587.81]
+        }, {
+          x: new Date(15388308e5),
+          y: [6587.81, 6592.73, 6567.14, 6578]
+        }, {
+          x: new Date(15388326e5),
+          y: [6578.35, 6581.72, 6567.39, 6579]
+        }, {
+          x: new Date(15388344e5),
+          y: [6579.38, 6580.92, 6566.77, 6575.96]
+        }, {
+          x: new Date(15388362e5),
+          y: [6575.96, 6589, 6571.77, 6588.92]
+        }, {
+          x: new Date(1538838e6),
+          y: [6588.92, 6594, 6577.55, 6589.22]
+        }, {
+          x: new Date(15388398e5),
+          y: [6589.3, 6598.89, 6589.1, 6596.08]
+        }, {
+          x: new Date(15388416e5),
+          y: [6597.5, 6600, 6588.39, 6596.25]
+        }, {
+          x: new Date(15388434e5),
+          y: [6598.03, 6600, 6588.73, 6595.97]
+        }, {
+          x: new Date(15388452e5),
+          y: [6595.97, 6602.01, 6588.17, 6602]
+        }, {
+          x: new Date(1538847e6),
+          y: [6602, 6607, 6596.51, 6599.95]
+        }, {
+          x: new Date(15388488e5),
+          y: [6600.63, 6601.21, 6590.39, 6591.02]
+        }, {
+          x: new Date(15388506e5),
+          y: [6591.02, 6603.08, 6591, 6591]
+        }, {
+          x: new Date(15388524e5),
+          y: [6591, 6601.32, 6585, 6592]
+        }, {
+          x: new Date(15388542e5),
+          y: [6593.13, 6596.01, 6590, 6593.34]
+        }, {
+          x: new Date(1538856e6),
+          y: [6593.34, 6604.76, 6582.63, 6593.86]
+        }, {
+          x: new Date(15388578e5),
+          y: [6593.86, 6604.28, 6586.57, 6600.01]
+        }, {
+          x: new Date(15388596e5),
+          y: [6601.81, 6603.21, 6592.78, 6596.25]
+        }, {
+          x: new Date(15388614e5),
+          y: [6596.25, 6604.2, 6590, 6602.99]
+        }, {
+          x: new Date(15388632e5),
+          y: [6602.99, 6606, 6584.99, 6587.81]
+        }, {
+          x: new Date(1538865e6),
+          y: [6587.81, 6595, 6583.27, 6591.96]
+        }, {
+          x: new Date(15388668e5),
+          y: [6591.97, 6596.07, 6585, 6588.39]
+        }, {
+          x: new Date(15388686e5),
+          y: [6587.6, 6598.21, 6587.6, 6594.27]
+        }, {
+          x: new Date(15388704e5),
+          y: [6596.44, 6601, 6590, 6596.55]
+        }, {
+          x: new Date(15388722e5),
+          y: [6598.91, 6605, 6596.61, 6600.02]
+        }, {
+          x: new Date(1538874e6),
+          y: [6600.55, 6605, 6589.14, 6593.01]
+        }, {
+          x: new Date(15388758e5),
+          y: [6593.15, 6605, 6592, 6603.06]
+        }]
+      }],
+      title: {
+        text: "CandleStick Chart",
+        align: "left"
+      },
+      xaxis: {
+        type: "datetime"
+      },
+      yaxis: {
+        tooltip: {
+          enabled: !0
+        }
+      }
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-candlestick-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
 
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#advanced-chart").length) {
-  var options = {
-    series: [
-    {
-      name: 'Bob',
-      data: [
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#apex-bubble-chart").length) {
+    function generateData(e, t, a) {
+      for (var n = 0, o = []; n < t;) {
+        var r = Math.floor(Math.random() * (a.max - a.min + 1)) + a.min,
+          i = Math.floor(61 * Math.random()) + 15;
+        o.push([e, r, i]), e += 864e5, n++
+      }
+      return o
+    }
+    options = {
+      chart: {
+        height: 350,
+        type: "bubble"
+      },
+      dataLabels: {
+        enabled: !1
+      },
+      series: [{
+        name: "Product1",
+        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
+          min: 10,
+          max: 40
+        })
+      }, {
+        name: "Product2",
+        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
+          min: 10,
+          max: 40
+        })
+      }, {
+        name: "Product3",
+        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 20, {
+          min: 10,
+          max: 40
+        })
+      }],
+      fill: {
+        type: "gradient"
+      },
+      colors: ["#4788ff", "#37e6b0", "#37e6b0"],
+      title: {
+        text: "3D Bubble Chart"
+      },
+      xaxis: {
+        tickAmount: 12,
+        type: "datetime",
+        labels: {
+          rotate: 0
+        }
+      },
+      yaxis: {
+        max: 40
+      },
+      theme: {
+        palette: "palette2"
+      }
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-bubble-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#apex-scatter-chart").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "scatter",
+        zoom: {
+          enabled: !0,
+          type: "xy"
+        }
+      },
+      colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
+      series: [{
+        name: "SAMPLE A",
+        data: [
+          [16.4, 5.4],
+          [21.7, 2],
+          [10.9, 0],
+          [10.9, 8.2],
+          [16.4, 0],
+          [16.4, 1.8],
+          [13.6, .3],
+          [13.6, 0],
+          [29.9, 0],
+          [27.1, 2.3],
+          [16.4, 0],
+          [13.6, 3.7],
+          [10.9, 5.2],
+          [16.4, 6.5],
+          [10.9, 0],
+          [24.5, 7.1],
+          [10.9, 0],
+          [8.1, 4.7]
+        ]
+      }, {
+        name: "SAMPLE B",
+        data: [
+          [36.4, 13.4],
+          [1.7, 11],
+          [1.9, 9],
+          [1.9, 13.2],
+          [1.4, 7],
+          [6.4, 8.8],
+          [3.6, 4.3],
+          [1.6, 10],
+          [9.9, 2],
+          [7.1, 15],
+          [1.4, 0],
+          [3.6, 13.7],
+          [1.9, 15.2],
+          [6.4, 16.5],
+          [.9, 10],
+          [4.5, 17.1],
+          [10.9, 10],
+          [.1, 14.7]
+        ]
+      }, {
+        name: "SAMPLE C",
+        data: [
+          [21.7, 3],
+          [23.6, 3.5],
+          [28, 4],
+          [27.1, .3],
+          [16.4, 4],
+          [13.6, 0],
+          [19, 5],
+          [22.4, 3],
+          [24.5, 3],
+          [32.6, 3],
+          [27.1, 4],
+          [29.6, 6],
+          [31.6, 8],
+          [21.6, 5],
+          [20.9, 4],
+          [22.4, 0],
+          [32.6, 10.3],
+          [29.7, 20.8]
+        ]
+      }],
+      xaxis: {
+        tickAmount: 5,
+        labels: {
+          formatter: function (e) {
+            return parseFloat(e).toFixed(1)
+          }
+        }
+      },
+      yaxis: {
+        tickAmount: 5
+      }
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-scatter-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#apex-radialbar-chart").length) {
+    options = {
+      chart: {
+        height: 350,
+        type: "radialBar"
+      },
+      plotOptions: {
+        radialBar: {
+          dataLabels: {
+            name: {
+              fontSize: "22px"
+            },
+            value: {
+              fontSize: "16px"
+            },
+            total: {
+              show: !0,
+              label: "Total",
+              formatter: function (e) {
+                return 249
+              }
+            }
+          }
+        }
+      },
+      series: [44, 55, 67, 83],
+      labels: ["Apples", "Oranges", "Bananas", "Berries"],
+      colors: ["#4788ff", "#ff4b4b", "#876cfe", "#37e6b0"]
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-radialbar-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#apex-pie-chart").length) {
+    options = {
+      chart: {
+        width: 380,
+        type: "pie"
+      },
+      labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
+      series: [44, 55, 13, 43, 22],
+      colors: ["#4788ff", "#ff4b4b", "#876cfe", "#37e6b0", "#c8c8c8"],
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 200
+          },
+          legend: {
+            position: "bottom"
+          }
+        }
+      }]
+    };
+    (chart = new ApexCharts(document.querySelector("#apex-pie-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#advanced-chart").length) {
+    var options = {
+      series: [
         {
-          x: 'Design',
-          y: [
-            new Date('2019-03-05').getTime(),
-            new Date('2019-03-08').getTime()
+          name: 'Bob',
+          data: [
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-08').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-02').getTime(),
+                new Date('2019-03-05').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-07').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-03').getTime(),
+                new Date('2019-03-09').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-08').getTime(),
+                new Date('2019-03-11').getTime()
+              ]
+            },
+            {
+              x: 'Validation',
+              y: [
+                new Date('2019-03-11').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            },
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-01').getTime(),
+                new Date('2019-03-03').getTime()
+              ]
+            }
           ]
         },
         {
-          x: 'Code',
-          y: [
-            new Date('2019-03-02').getTime(),
-            new Date('2019-03-05').getTime()
+          name: 'Joe',
+          data: [
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-02').getTime(),
+                new Date('2019-03-05').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-06').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-03').getTime(),
+                new Date('2019-03-07').getTime()
+              ]
+            },
+            {
+              x: 'Deployment',
+              y: [
+                new Date('2019-03-20').getTime(),
+                new Date('2019-03-22').getTime()
+              ]
+            },
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-10').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            }
           ]
         },
         {
-          x: 'Code',
-          y: [
-            new Date('2019-03-05').getTime(),
-            new Date('2019-03-07').getTime()
-          ]
-        },
-        {
-          x: 'Test',
-          y: [
-            new Date('2019-03-03').getTime(),
-            new Date('2019-03-09').getTime()
-          ]
-        },
-        {
-          x: 'Test',
-          y: [
-            new Date('2019-03-08').getTime(),
-            new Date('2019-03-11').getTime()
-          ]
-        },
-        {
-          x: 'Validation',
-          y: [
-            new Date('2019-03-11').getTime(),
-            new Date('2019-03-16').getTime()
-          ]
-        },
-        {
-          x: 'Design',
-          y: [
-            new Date('2019-03-01').getTime(),
-            new Date('2019-03-03').getTime()
+          name: 'Dan',
+          data: [
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-10').getTime(),
+                new Date('2019-03-17').getTime()
+              ]
+            },
+            {
+              x: 'Validation',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-09').getTime()
+              ]
+            },
           ]
         }
-      ]
-    },
-    {
-      name: 'Joe',
-      data: [
-        {
-          x: 'Design',
-          y: [
-            new Date('2019-03-02').getTime(),
-            new Date('2019-03-05').getTime()
-          ]
-        },
-        {
-          x: 'Test',
-          y: [
-            new Date('2019-03-06').getTime(),
-            new Date('2019-03-16').getTime()
-          ]
-        },
-        {
-          x: 'Code',
-          y: [
-            new Date('2019-03-03').getTime(),
-            new Date('2019-03-07').getTime()
-          ]
-        },
-        {
-          x: 'Deployment',
-          y: [
-            new Date('2019-03-20').getTime(),
-            new Date('2019-03-22').getTime()
-          ]
-        },
-        {
-          x: 'Design',
-          y: [
-            new Date('2019-03-10').getTime(),
-            new Date('2019-03-16').getTime()
-          ]
+      ],
+      colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
+      chart: {
+        height: 450,
+        type: 'rangeBar'
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          barHeight: '80%'
         }
-      ]
-    },
-    {
-      name: 'Dan',
-      data: [
-        {
-          x: 'Code',
-          y: [
-            new Date('2019-03-10').getTime(),
-            new Date('2019-03-17').getTime()
-          ]
-        },
-        {
-          x: 'Validation',
-          y: [
-            new Date('2019-03-05').getTime(),
-            new Date('2019-03-09').getTime()
-          ]
-        },
-      ]
-    }
-  ],
-    colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
-    chart: {
-    height: 450,
-    type: 'rangeBar'
-  },
-  plotOptions: {
-    bar: {
-      horizontal: true,
-      barHeight: '80%'
-    }
-  },
-  xaxis: {
-    type: 'datetime'
-  },
-  stroke: {
-    width: 1
-  },
-  fill: {
-    type: 'solid',
-    opacity: 0.6
-  },
-  legend: {
-    position: 'top',
-    horizontalAlign: 'left'
-  }
-  };
+      },
+      xaxis: {
+        type: 'datetime'
+      },
+      stroke: {
+        width: 1
+      },
+      fill: {
+        type: 'solid',
+        opacity: 0.6
+      },
+      legend: {
+        position: 'top',
+        horizontalAlign: 'left'
+      }
+    };
 
-  (chart = new ApexCharts(document.querySelector("#advanced-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    (chart = new ApexCharts(document.querySelector("#advanced-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+  }
+  if (jQuery("#radar-multiple-chart").length) {
+    var options = {
+      series: [{
+        name: 'Series 1',
+        data: [80, 50, 30, 40, 100, 20],
+      }, {
+        name: 'Series 2',
+        data: [20, 30, 40, 80, 20, 80],
+      }, {
+        name: 'Series 3',
+        data: [44, 76, 78, 13, 43, 10],
+      }],
+      colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
+      chart: {
+        height: 350,
+        type: 'radar',
+        dropShadow: {
+          enabled: true,
+          blur: 1,
+          left: 1,
+          top: 1
+        }
+      },
+      title: {
+        text: 'Radar Chart - Multi Series'
+      },
+      stroke: {
+        width: 2
+      },
+      fill: {
+        opacity: 0.1
+      },
+      markers: {
+        size: 0
+      },
+      xaxis: {
+        categories: ['2011', '2012', '2013', '2014', '2015', '2016']
+      }
+    };
+
+    (chart = new ApexCharts(document.querySelector("#radar-multiple-chart"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
 
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#radar-multiple-chart").length) {
-  var options = {
-    series: [{
-    name: 'Series 1',
-    data: [80, 50, 30, 40, 100, 20],
-  }, {
-    name: 'Series 2',
-    data: [20, 30, 40, 80, 20, 80],
-  }, {
-    name: 'Series 3',
-    data: [44, 76, 78, 13, 43, 10],
-  }],
-  colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
-    chart: {
-    height: 350,
-    type: 'radar',
-    dropShadow: {
-      enabled: true,
-      blur: 1,
-      left: 1,
-      top: 1
-    }
-  },
-  title: {
-    text: 'Radar Chart - Multi Series'
-  },
-  stroke: {
-    width: 2
-  },
-  fill: {
-    opacity: 0.1
-  },
-  markers: {
-    size: 0
-  },
-  xaxis: {
-    categories: ['2011', '2012', '2013', '2014', '2015', '2016']
-  }
-  };
-
-  (chart = new ApexCharts(document.querySelector("#radar-multiple-chart"), options)).render()
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
-    })
-  }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
 
 
+  /*---------------------------------------------------------------------
+     Am Charts
+  -----------------------------------------------------------------------*/
 
-/*---------------------------------------------------------------------
-   Am Charts
------------------------------------------------------------------------*/
-
-    if(jQuery('#am-simple-chart').length){
-      am4core.ready(function() {
+  if (jQuery('#am-simple-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -971,7 +971,7 @@ if (jQuery("#radar-multiple-chart").length) {
 
       // Create chart instance
       var chart = am4core.create("am-simple-chart", am4charts.XYChart);
-      chart.colors.list = [am4core.color("#32BDEA"),am4core.color("#6c757d")];
+      chart.colors.list = [am4core.color("#32BDEA"), am4core.color("#6c757d")];
 
       // Add data
       chart.data = [{
@@ -1001,7 +1001,7 @@ if (jQuery("#radar-multiple-chart").length) {
       categoryAxis.renderer.grid.template.location = 0;
       categoryAxis.renderer.minGridDistance = 30;
 
-      categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+      categoryAxis.renderer.labels.template.adapter.add("dy", function (dy, target) {
         if (target.dataItem && target.dataItem.index & 2 == 2) {
           return dy + 25;
         }
@@ -1033,11 +1033,11 @@ if (jQuery("#radar-multiple-chart").length) {
         amChartUpdate(chart, e.detail)
       })
 
-      }); // end am4core.ready()
-   }
+    }); // end am4core.ready()
+  }
 
-   if(jQuery('#am-columnlinr-chart').length){
-      am4core.ready(function() {
+  if (jQuery('#am-columnlinr-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -1045,13 +1045,13 @@ if (jQuery("#radar-multiple-chart").length) {
 
       // Create chart instance
       var chart = am4core.create("am-columnlinr-chart", am4charts.XYChart);
-       chart.colors.list = [am4core.color("#4788ff"),];
+      chart.colors.list = [am4core.color("#4788ff"),];
 
       // Export
       chart.exporting.menu = new am4core.ExportMenu();
 
       // Data for both series
-      var data = [ {
+      var data = [{
         "year": "2009",
         "income": 23.5,
         "expenses": 21.1
@@ -1080,7 +1080,7 @@ if (jQuery("#radar-multiple-chart").length) {
         "columnDash": "5,5",
         "fillOpacity": 0.2,
         "additional": "(projection)"
-      } ];
+      }];
 
       /* Create axes */
       var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -1123,22 +1123,22 @@ if (jQuery("#radar-multiple-chart").length) {
 
       chart.data = data;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      });
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-stackedcolumn-chart').length){
-      am4core.ready(function() {
+    });
+  }
+
+  if (jQuery('#am-stackedcolumn-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -1218,22 +1218,22 @@ if (jQuery("#radar-multiple-chart").length) {
       // Legend
       chart.legend = new am4charts.Legend();
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-barline-chart').length){
-      am4core.ready(function() {
+    }); // end am4core.ready()
+  }
+
+  if (jQuery('#am-barline-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -1244,26 +1244,26 @@ if (jQuery("#radar-multiple-chart").length) {
       am4core.color("#37e6b0")];
 
       chart.data = [{
-              "year": "2005",
-              "income": 23.5,
-              "expenses": 18.1
-          }, {
-              "year": "2006",
-              "income": 26.2,
-              "expenses": 22.8
-          }, {
-              "year": "2007",
-              "income": 30.1,
-              "expenses": 23.9
-          }, {
-              "year": "2008",
-              "income": 29.5,
-              "expenses": 25.1
-          }, {
-              "year": "2009",
-              "income": 24.6,
-              "expenses": 25
-          }];
+        "year": "2005",
+        "income": 23.5,
+        "expenses": 18.1
+      }, {
+        "year": "2006",
+        "income": 26.2,
+        "expenses": 22.8
+      }, {
+        "year": "2007",
+        "income": 30.1,
+        "expenses": 23.9
+      }, {
+        "year": "2008",
+        "income": 29.5,
+        "expenses": 25.1
+      }, {
+        "year": "2009",
+        "income": 24.6,
+        "expenses": 25
+      }];
 
       //create category axis for years
       var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
@@ -1305,22 +1305,22 @@ if (jQuery("#radar-multiple-chart").length) {
       //add legend
       chart.legend = new am4charts.Legend();
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-datedata-chart').length){
-      am4core.ready(function() {
+    }); // end am4core.ready()
+  }
+
+  if (jQuery('#am-datedata-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -1949,22 +1949,22 @@ if (jQuery("#radar-multiple-chart").length) {
       dateAxis.start = 0.79;
       dateAxis.keepSelection = true;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
+
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
 
-      }); // end am4core.ready()
-   }
-   if(jQuery('#am-linescrollzomm-chart').length){
-      am4core.ready(function() {
+    }); // end am4core.ready()
+  }
+  if (jQuery('#am-linescrollzomm-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -1993,7 +1993,7 @@ if (jQuery("#radar-multiple-chart").length) {
       series.tooltip.pointerOrientation = "vertical";
       series.tooltip.background.cornerRadius = 20;
       series.tooltip.background.fillOpacity = 0.5;
-      series.tooltip.label.padding(12,12,12,12)
+      series.tooltip.label.padding(12, 12, 12, 12)
 
       // Add scrollbar
       chart.scrollbarX = new am4charts.XYChartScrollbar();
@@ -2005,40 +2005,40 @@ if (jQuery("#radar-multiple-chart").length) {
       chart.cursor.snapToSeries = series;
 
       function generateChartData() {
-          var chartData = [];
-          var firstDate = new Date();
-          firstDate.setDate(firstDate.getDate() - 1000);
-          var visits = 1200;
-          for (var i = 0; i < 500; i++) {
-              var newDate = new Date(firstDate);
-              newDate.setDate(newDate.getDate() + i);
+        var chartData = [];
+        var firstDate = new Date();
+        firstDate.setDate(firstDate.getDate() - 1000);
+        var visits = 1200;
+        for (var i = 0; i < 500; i++) {
+          var newDate = new Date(firstDate);
+          newDate.setDate(newDate.getDate() + i);
 
-              visits += Math.round((Math.random()<0.5?1:-1)*Math.random()*10);
+          visits += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
 
-              chartData.push({
-                  date: newDate,
-                  visits: visits
-              });
-          }
-          return chartData;
+          chartData.push({
+            date: newDate,
+            visits: visits
+          });
+        }
+        return chartData;
       }
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      });
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-zoomable-chart').length){
-      am4core.ready(function() {
+    });
+  }
+
+  if (jQuery('#am-zoomable-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -2049,7 +2049,7 @@ if (jQuery("#radar-multiple-chart").length) {
       chart.colors.list = [am4core.color("#57aeff")];
 
       // Add data
-      chart.data = [ {
+      chart.data = [{
         "date": "2012-07-27",
         "value": 13
       }, {
@@ -2601,7 +2601,7 @@ if (jQuery("#radar-multiple-chart").length) {
       }, {
         "date": "2013-01-30",
         "value": 81
-      } ];
+      }];
 
       // Create axes
       var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -2626,21 +2626,21 @@ if (jQuery("#radar-multiple-chart").length) {
       chart.cursor.behavior = "zoomY";
       chart.cursor.lineX.disabled = true;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
-   if(jQuery('#am-radar-chart').length){
-      am4core.ready(function() {
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
+
+    }); // end am4core.ready()
+  }
+  if (jQuery('#am-radar-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -2695,21 +2695,21 @@ if (jQuery("#radar-multiple-chart").length) {
       series.name = "Sales";
       series.strokeWidth = 3;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
-   if(jQuery('#am-polar-chart').length){
-      am4core.ready(function() {
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
+
+    }); // end am4core.ready()
+  }
+  if (jQuery('#am-polar-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -2719,7 +2719,7 @@ if (jQuery("#radar-multiple-chart").length) {
       var chart = am4core.create("am-polar-chart", am4charts.RadarChart);
 
       /* Add data */
-      chart.data = [ {
+      chart.data = [{
         "direction": "N",
         "value": 8
       }, {
@@ -2743,7 +2743,7 @@ if (jQuery("#radar-multiple-chart").length) {
       }, {
         "direction": "NW",
         "value": 10
-      } ];
+      }];
 
       /* Create axes */
       var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
@@ -2779,22 +2779,22 @@ if (jQuery("#radar-multiple-chart").length) {
       series.strokeWidth = 3;
       series.fillOpacity = 0.2;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-polarscatter-chart').length){
-      am4core.ready(function() {
+    }); // end am4core.ready()
+  }
+
+  if (jQuery('#am-polarscatter-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -2802,7 +2802,7 @@ if (jQuery("#radar-multiple-chart").length) {
 
       /* Create chart instance */
       var chart = am4core.create("am-polarscatter-chart", am4charts.RadarChart);
-       chart.colors.list = [am4core.color("#4788ff"),am4core.color("#fe721c"),am4core.color("#37e6b0")];
+      chart.colors.list = [am4core.color("#4788ff"), am4core.color("#fe721c"), am4core.color("#37e6b0")];
 
       /* Add data */
       chart.data = [{
@@ -2941,21 +2941,21 @@ if (jQuery("#radar-multiple-chart").length) {
       /* Add cursor */
       chart.cursor = new am4charts.RadarCursor();
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
-   if(jQuery('#am-3dpie-chart').length){
-      am4core.ready(function() {
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
+
+    }); // end am4core.ready()
+  }
+  if (jQuery('#am-3dpie-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -2995,27 +2995,27 @@ if (jQuery("#radar-multiple-chart").length) {
       ];
 
       var series = chart.series.push(new am4charts.PieSeries3D());
-      series.colors.list = [am4core.color("#4788ff"),am4core.color("#37e6b0"),am4core.color("#ff4b4b"),
-      am4core.color("#fe721c"),am4core.color("#876cfe"),am4core.color("#01041b")];
+      series.colors.list = [am4core.color("#4788ff"), am4core.color("#37e6b0"), am4core.color("#ff4b4b"),
+      am4core.color("#fe721c"), am4core.color("#876cfe"), am4core.color("#01041b")];
       series.dataFields.value = "litres";
       series.dataFields.category = "country";
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-   if(jQuery('#am-layeredcolumn-chart').length){
-      am4core.ready(function() {
+    }); // end am4core.ready()
+  }
+
+  if (jQuery('#am-layeredcolumn-chart').length) {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
@@ -3023,36 +3023,36 @@ if (jQuery("#radar-multiple-chart").length) {
 
       // Create chart instance
       var chart = am4core.create("am-layeredcolumn-chart", am4charts.XYChart);
-      chart.colors.list = [am4core.color("#37e6b0"),am4core.color("#4788ff")];
+      chart.colors.list = [am4core.color("#37e6b0"), am4core.color("#4788ff")];
 
       // Add percent sign to all numbers
       chart.numberFormatter.numberFormat = "#.#'%'";
 
       // Add data
       chart.data = [{
-          "country": "USA",
-          "year2004": 3.5,
-          "year2005": 4.2
+        "country": "USA",
+        "year2004": 3.5,
+        "year2005": 4.2
       }, {
-          "country": "UK",
-          "year2004": 1.7,
-          "year2005": 3.1
+        "country": "UK",
+        "year2004": 1.7,
+        "year2005": 3.1
       }, {
-          "country": "Canada",
-          "year2004": 2.8,
-          "year2005": 2.9
+        "country": "Canada",
+        "year2004": 2.8,
+        "year2005": 2.9
       }, {
-          "country": "Japan",
-          "year2004": 2.6,
-          "year2005": 2.3
+        "country": "Japan",
+        "year2004": 2.6,
+        "year2005": 2.3
       }, {
-          "country": "France",
-          "year2004": 1.4,
-          "year2005": 2.1
+        "country": "France",
+        "year2004": 1.4,
+        "year2005": 2.1
       }, {
-          "country": "Brazil",
-          "year2004": 2.6,
-          "year2005": 4.9
+        "country": "Brazil",
+        "year2004": 2.6,
+        "year2005": 4.9
       }];
 
       // Create axes
@@ -3083,113 +3083,113 @@ if (jQuery("#radar-multiple-chart").length) {
       chart.cursor.lineX.disabled = true;
       chart.cursor.lineY.disabled = true;
 
-        const body = document.querySelector('body')
-        if (body.classList.contains('dark')) {
-          amChartUpdate(chart, {
-            dark: true
-          })
-        }
-
-        document.addEventListener('ChangeColorMode', function (e) {
-          amChartUpdate(chart, e.detail)
+      const body = document.querySelector('body')
+      if (body.classList.contains('dark')) {
+        amChartUpdate(chart, {
+          dark: true
         })
+      }
 
-      }); // end am4core.ready()
-   }
+      document.addEventListener('ChangeColorMode', function (e) {
+        amChartUpdate(chart, e.detail)
+      })
 
-/*---------------------------------------------------------------------
-   Morris Charts
------------------------------------------------------------------------*/
+    }); // end am4core.ready()
+  }
 
-if(jQuery('#morris-line-chart').length){
-  new Morris.Line({
-    // ID of the element in which to draw the chart.
-    element: 'morris-line-chart',
-    // Chart data records -- each entry in this array corresponds to a point on
-    // the chart.
-    data: [
-      { year: '2008', value: 20 },
-      { year: '2009', value: 10 },
-      { year: '2010', value: 5 },
-      { year: '2011', value: 5 },
-      { year: '2012', value: 20 }
-    ],
-    // The name of the data record attribute that contains x-values.
-    xkey: 'year',
-    // A list of names of data record attributes that contain y-values.
-    ykeys: ['value'],
-    // Labels for the ykeys -- will be displayed when you hover over the
-    // chart.
-    labels: ['Value'],
-    lineColors: ['#4788ff']
-  });
-}
+  /*---------------------------------------------------------------------
+     Morris Charts
+  -----------------------------------------------------------------------*/
 
-if(jQuery('#morris-bar-chart').length){
- Morris.Bar({
-element: 'morris-bar-chart',
-data: [
-  {x: '2011 Q1', y: 3, z: 2, a: 3},
-  {x: '2011 Q2', y: 2, z: null, a: 1},
-  {x: '2011 Q3', y: 0, z: 2, a: 4},
-  {x: '2011 Q4', y: 2, z: 4, a: 3}
-],
-xkey: 'x',
-ykeys: ['y', 'z', 'a'],
-labels: ['Y', 'Z', 'A'],
-barColors: ['#4788ff', '#fe721c', '#37e6b0'],
-hoverCallback: function (index, options, content, row) {
-                    return '';
-                  }
-}).on('click', function(i, row){
-console.log(i, row);
-});
-}
+  if (jQuery('#morris-line-chart').length) {
+    new Morris.Line({
+      // ID of the element in which to draw the chart.
+      element: 'morris-line-chart',
+      // Chart data records -- each entry in this array corresponds to a point on
+      // the chart.
+      data: [
+        { year: '2008', value: 20 },
+        { year: '2009', value: 10 },
+        { year: '2010', value: 5 },
+        { year: '2011', value: 5 },
+        { year: '2012', value: 20 }
+      ],
+      // The name of the data record attribute that contains x-values.
+      xkey: 'year',
+      // A list of names of data record attributes that contain y-values.
+      ykeys: ['value'],
+      // Labels for the ykeys -- will be displayed when you hover over the
+      // chart.
+      labels: ['Value'],
+      lineColors: ['#4788ff']
+    });
+  }
 
-if(jQuery('#morris-area-chart').length){
-  var area = new Morris.Area({
-    element: 'morris-area-chart',
-    resize: true,
-    data: [
-      {y: '2011 Q1', item1: 2666, item2: 2666},
-      {y: '2011 Q2', item1: 2778, item2: 2294},
-      {y: '2011 Q3', item1: 4912, item2: 1969},
-      {y: '2011 Q4', item1: 3767, item2: 3597},
-      {y: '2012 Q1', item1: 6810, item2: 1914},
-      {y: '2012 Q2', item1: 5670, item2: 4293},
-      {y: '2012 Q3', item1: 4820, item2: 3795},
-      {y: '2012 Q4', item1: 15073, item2: 5967},
-      {y: '2013 Q1', item1: 10687, item2: 4460},
-      {y: '2013 Q2', item1: 8432, item2: 5713}
-    ],
-    xkey: 'y',
-    ykeys: ['item1', 'item2'],
-    labels: ['Item 1', 'Item 2'],
-    lineColors: ['#75e275', '#75bcff'],
-    hoverCallback: function (index, options, content, row) {
-                    return '';
-                  }
-  });
-}
+  if (jQuery('#morris-bar-chart').length) {
+    Morris.Bar({
+      element: 'morris-bar-chart',
+      data: [
+        { x: '2011 Q1', y: 3, z: 2, a: 3 },
+        { x: '2011 Q2', y: 2, z: null, a: 1 },
+        { x: '2011 Q3', y: 0, z: 2, a: 4 },
+        { x: '2011 Q4', y: 2, z: 4, a: 3 }
+      ],
+      xkey: 'x',
+      ykeys: ['y', 'z', 'a'],
+      labels: ['Y', 'Z', 'A'],
+      barColors: ['#4788ff', '#fe721c', '#37e6b0'],
+      hoverCallback: function (index, options, content, row) {
+        return '';
+      }
+    }).on('click', function (i, row) {
+      console.log(i, row);
+    });
+  }
 
-if(jQuery('#morris-donut-chart').length){
-  var donut = new Morris.Donut({
-    element: 'morris-donut-chart',
-    resize: true,
-    colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
-    data: [
-      {label: "Download Sales", value: 12},
-      {label: "In-Store Sales", value: 30},
-      {label: "Mail-Order Sales", value: 20}
-    ],
-    hideHover: 'auto'
-  });
-}
+  if (jQuery('#morris-area-chart').length) {
+    var area = new Morris.Area({
+      element: 'morris-area-chart',
+      resize: true,
+      data: [
+        { y: '2011 Q1', item1: 2666, item2: 2666 },
+        { y: '2011 Q2', item1: 2778, item2: 2294 },
+        { y: '2011 Q3', item1: 4912, item2: 1969 },
+        { y: '2011 Q4', item1: 3767, item2: 3597 },
+        { y: '2012 Q1', item1: 6810, item2: 1914 },
+        { y: '2012 Q2', item1: 5670, item2: 4293 },
+        { y: '2012 Q3', item1: 4820, item2: 3795 },
+        { y: '2012 Q4', item1: 15073, item2: 5967 },
+        { y: '2013 Q1', item1: 10687, item2: 4460 },
+        { y: '2013 Q2', item1: 8432, item2: 5713 }
+      ],
+      xkey: 'y',
+      ykeys: ['item1', 'item2'],
+      labels: ['Item 1', 'Item 2'],
+      lineColors: ['#75e275', '#75bcff'],
+      hoverCallback: function (index, options, content, row) {
+        return '';
+      }
+    });
+  }
 
-/*---------------------------------------------------------------------
-   High Charts
------------------------------------------------------------------------*/
-if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-chart", {
+  if (jQuery('#morris-donut-chart').length) {
+    var donut = new Morris.Donut({
+      element: 'morris-donut-chart',
+      resize: true,
+      colors: ["#4788ff", "#ff4b4b", "#37e6b0"],
+      data: [
+        { label: "Download Sales", value: 12 },
+        { label: "In-Store Sales", value: 30 },
+        { label: "Mail-Order Sales", value: 20 }
+      ],
+      hideHover: 'auto'
+    });
+  }
+
+  /*---------------------------------------------------------------------
+     High Charts
+  -----------------------------------------------------------------------*/
+  if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-chart", {
     chart: {
       type: "spline",
       inverted: !0
@@ -3573,9 +3573,9 @@ if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-c
       animation: Highcharts.svg,
       marginRight: 10,
       events: {
-        load: function() {
+        load: function () {
           var e = this.series[0];
-          setInterval(function() {
+          setInterval(function () {
             var t = (new Date).getTime(),
               a = Math.random();
             e.addPoint([t, a], !0, !0)
@@ -3593,7 +3593,7 @@ if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-c
       announceNewData: {
         enabled: !0,
         minAnnounceInterval: 15e3,
-        announcementFormatter: function(e, t, a) {
+        announcementFormatter: function (e, t, a) {
           return !!a && "New point added. Value: " + a.y
         }
       }
@@ -3625,7 +3625,7 @@ if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-c
     series: [{
       name: "Random data",
       color: "#4788ff",
-      data: function() {
+      data: function () {
         var e, t = [],
           a = (new Date).getTime();
         for (e = -19; e <= 0; e += 1) t.push({
@@ -3636,43 +3636,43 @@ if (jQuery("#high-basicline-chart").length && Highcharts.chart("high-basicline-c
       }()
     }]
   }), jQuery("#high-3d-chart").length) {
-  var chart = new Highcharts.Chart({
-    chart: {
-      renderTo: "high-3d-chart",
-      type: "column",
-      options3d: {
-        enabled: !0,
-        alpha: 15,
-        beta: 15,
-        depth: 50,
-        viewDistance: 25
-      }
-    },
-    title: {
-      text: "Chart rotation demo"
-    },
-    subtitle: {
-      text: "Test options by dragging the sliders below"
-    },
-    plotOptions: {
-      column: {
-        depth: 25
-      }
-    },
-    series: [{
-      data: [29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-      color: "#4788ff"
-    }]
-  });
+    var chart = new Highcharts.Chart({
+      chart: {
+        renderTo: "high-3d-chart",
+        type: "column",
+        options3d: {
+          enabled: !0,
+          alpha: 15,
+          beta: 15,
+          depth: 50,
+          viewDistance: 25
+        }
+      },
+      title: {
+        text: "Chart rotation demo"
+      },
+      subtitle: {
+        text: "Test options by dragging the sliders below"
+      },
+      plotOptions: {
+        column: {
+          depth: 25
+        }
+      },
+      series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+        color: "#4788ff"
+      }]
+    });
 
-  function showValues() {
-    $("#alpha-value").html(chart.options.chart.options3d.alpha), $("#beta-value").html(chart.options.chart.options3d.beta), $("#depth-value").html(chart.options.chart.options3d.depth)
+    function showValues() {
+      $("#alpha-value").html(chart.options.chart.options3d.alpha), $("#beta-value").html(chart.options.chart.options3d.beta), $("#depth-value").html(chart.options.chart.options3d.depth)
+    }
+    $("#sliders input").on("input change", function () {
+      chart.options.chart.options3d[this.id] = parseFloat(this.value), showValues(), chart.redraw(!1)
+    }), showValues()
   }
-  $("#sliders input").on("input change", function() {
-    chart.options.chart.options3d[this.id] = parseFloat(this.value), showValues(), chart.redraw(!1)
-  }), showValues()
-}
-if (jQuery("#high-gauges-chart").length && Highcharts.chart("high-gauges-chart", {
+  if (jQuery("#high-gauges-chart").length && Highcharts.chart("high-gauges-chart", {
     chart: {
       type: "gauge",
       plotBackgroundColor: null,
@@ -3764,837 +3764,837 @@ if (jQuery("#high-gauges-chart").length && Highcharts.chart("high-gauges-chart",
         valueSuffix: " km/h"
       }
     }]
-  }, function(e) {
-    e.renderer.forExport || setInterval(function() {
+  }, function (e) {
+    e.renderer.forExport || setInterval(function () {
       var t, a = e.series[0].points[0],
         n = Math.round(20 * (Math.random() - .5));
       ((t = a.y + n) < 0 || t > 200) && (t = a.y - n), a.update(t)
     }, 3e3)
   }), jQuery("#high-barwithnagative-chart").length) {
-  var categories = ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", "95-99", "100 + "];
-  Highcharts.chart("high-barwithnagative-chart", {
-    chart: {
-      type: "bar"
-    },
-    title: {
-      text: "Population pyramid for Germany, 2018"
-    },
-    subtitle: {
-      text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
-    },
-    accessibility: {
-      point: {
-        descriptionFormatter: function(e) {
-          return e.index + 1 + ", Age " + e.category + ", " + Math.abs(e.y) + "%. " + e.series.name + "."
-        }
-      }
-    },
-    xAxis: [{
-      categories: categories,
-      reversed: !1,
-      labels: {
-        step: 1
+    var categories = ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90-94", "95-99", "100 + "];
+    Highcharts.chart("high-barwithnagative-chart", {
+      chart: {
+        type: "bar"
       },
-      accessibility: {
-        description: "Age (male)"
-      }
-    }, {
-      opposite: !0,
-      reversed: !1,
-      categories: categories,
-      linkedTo: 0,
-      labels: {
-        step: 1
-      },
-      accessibility: {
-        description: "Age (female)"
-      }
-    }],
-    yAxis: {
       title: {
-        text: null
+        text: "Population pyramid for Germany, 2018"
       },
-      labels: {
-        formatter: function() {
-          return Math.abs(this.value) + "%"
-        }
+      subtitle: {
+        text: 'Source: <a href="http://populationpyramid.net/germany/2018/">Population Pyramids of the World from 1950 to 2100</a>'
       },
       accessibility: {
-        description: "Percentage population",
-        rangeDescription: "Range: 0 to 5%"
-      }
-    },
-    plotOptions: {
-      series: {
-        stacking: "normal"
-      }
-    },
-    tooltip: {
-      formatter: function() {
-        return "<b>" + this.series.name + ", age " + this.point.category + "</b><br/>Population: " + Highcharts.numberFormat(Math.abs(this.point.y), 1) + "%"
-      }
-    },
-    series: [{
-      name: "Male",
-      data: [-2.2, -2.1, -2.2, -2.4, -2.7, -3, -3.3, -3.2, -2.9, -3.5, -4.4, -4.1, -0],
-      color: "#4788ff"
-    }, {
-      name: "Female",
-      data: [2.1, 2, 2.1, 2.3, 2.6, 2.9, 3.2, 3.1, 2.9, 3.4, 0],
-      color: "#ff4b4b"
-    }]
-  })
-}
-
-/*--------------Widget Chart 1----------------*/
-
-var options = {
-    chart: {
-        height: 80,
-        type: 'area',
-        sparkline: {
-            enabled: true
+        point: {
+          descriptionFormatter: function (e) {
+            return e.index + 1 + ", Age " + e.category + ", " + Math.abs(e.y) + "%. " + e.series.name + "."
+          }
+        }
+      },
+      xAxis: [{
+        categories: categories,
+        reversed: !1,
+        labels: {
+          step: 1
         },
-        group: 'sparklines',
+        accessibility: {
+          description: "Age (male)"
+        }
+      }, {
+        opposite: !0,
+        reversed: !1,
+        categories: categories,
+        linkedTo: 0,
+        labels: {
+          step: 1
+        },
+        accessibility: {
+          description: "Age (female)"
+        }
+      }],
+      yAxis: {
+        title: {
+          text: null
+        },
+        labels: {
+          formatter: function () {
+            return Math.abs(this.value) + "%"
+          }
+        },
+        accessibility: {
+          description: "Percentage population",
+          rangeDescription: "Range: 0 to 5%"
+        }
+      },
+      plotOptions: {
+        series: {
+          stacking: "normal"
+        }
+      },
+      tooltip: {
+        formatter: function () {
+          return "<b>" + this.series.name + ", age " + this.point.category + "</b><br/>Population: " + Highcharts.numberFormat(Math.abs(this.point.y), 1) + "%"
+        }
+      },
+      series: [{
+        name: "Male",
+        data: [-2.2, -2.1, -2.2, -2.4, -2.7, -3, -3.3, -3.2, -2.9, -3.5, -4.4, -4.1, -0],
+        color: "#4788ff"
+      }, {
+        name: "Female",
+        data: [2.1, 2, 2.1, 2.3, 2.6, 2.9, 3.2, 3.1, 2.9, 3.4, 0],
+        color: "#ff4b4b"
+      }]
+    })
+  }
+
+  /*--------------Widget Chart 1----------------*/
+
+  var options = {
+    chart: {
+      height: 80,
+      type: 'area',
+      sparkline: {
+        enabled: true
+      },
+      group: 'sparklines',
 
     },
     dataLabels: {
-        enabled: false
+      enabled: false
     },
     stroke: {
-        width: 3,
-        curve: 'smooth'
+      width: 3,
+      curve: 'smooth'
     },
     fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-        }
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.5,
+        opacityTo: 0,
+      }
     },
 
     series: [{
-        name: 'series1',
-        data: [60, 15, 50, 30, 70]
-    }, ],
+      name: 'series1',
+      data: [60, 15, 50, 30, 70]
+    },],
     colors: ['#50b5ff'],
 
     xaxis: {
-        type: 'datetime',
-        categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
+      type: 'datetime',
+      categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
     },
     tooltip: {
-        x: {
-            format: 'dd/MM/yy HH:mm'
-        },
+      x: {
+        format: 'dd/MM/yy HH:mm'
+      },
     }
-};
+  };
 
-if(jQuery('#chart-1').length){
+  if (jQuery('#chart-1').length) {
     var chart = new ApexCharts(
-        document.querySelector("#chart-1"),
-        options
+      document.querySelector("#chart-1"),
+      options
     );
     chart.render();
-}
+  }
 
 
-/*--------------Widget Chart 2----------------*/
-var options = {
+  /*--------------Widget Chart 2----------------*/
+  var options = {
     chart: {
-        height: 80,
-        type: 'area',
-        sparkline: {
-            enabled: true
-        },
-        group: 'sparklines',
+      height: 80,
+      type: 'area',
+      sparkline: {
+        enabled: true
+      },
+      group: 'sparklines',
 
     },
     dataLabels: {
-        enabled: false
+      enabled: false
     },
     stroke: {
-        width: 3,
-        curve: 'smooth'
+      width: 3,
+      curve: 'smooth'
     },
     fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-        }
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.5,
+        opacityTo: 0,
+      }
     },
     series: [{
-        name: 'series1',
-        data: [70, 40, 60, 30, 60]
-    }, ],
+      name: 'series1',
+      data: [70, 40, 60, 30, 60]
+    },],
     colors: ['#fd7e14'],
 
     xaxis: {
-        type: 'datetime',
-        categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
+      type: 'datetime',
+      categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
     },
     tooltip: {
-        x: {
-            format: 'dd/MM/yy HH:mm'
-        },
+      x: {
+        format: 'dd/MM/yy HH:mm'
+      },
     }
-};
+  };
 
-if(jQuery('#chart-2').length){
+  if (jQuery('#chart-2').length) {
     var chart = new ApexCharts(
-        document.querySelector("#chart-2"),
-        options
+      document.querySelector("#chart-2"),
+      options
     );
 
     chart.render();
-}
+  }
 
-/*--------------Widget Chart 3----------------*/
-var options = {
+  /*--------------Widget Chart 3----------------*/
+  var options = {
     chart: {
-        height: 80,
-        type: 'area',
-        sparkline: {
-            enabled: true
-        },
-        group: 'sparklines',
+      height: 80,
+      type: 'area',
+      sparkline: {
+        enabled: true
+      },
+      group: 'sparklines',
 
     },
     dataLabels: {
-        enabled: false
+      enabled: false
     },
     stroke: {
-        width: 3,
-        curve: 'smooth'
+      width: 3,
+      curve: 'smooth'
     },
     fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-        }
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.5,
+        opacityTo: 0,
+      }
     },
     series: [{
-        name: 'series1',
-        data: [60, 40, 60, 40, 70]
-    }, ],
+      name: 'series1',
+      data: [60, 40, 60, 40, 70]
+    },],
     colors: ['#49f0d3'],
 
     xaxis: {
-        type: 'datetime',
-        categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
+      type: 'datetime',
+      categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
     },
     tooltip: {
-        x: {
-            format: 'dd/MM/yy HH:mm'
-        },
+      x: {
+        format: 'dd/MM/yy HH:mm'
+      },
     }
-};
-if(jQuery('#chart-3').length){
+  };
+  if (jQuery('#chart-3').length) {
     var chart = new ApexCharts(
-        document.querySelector("#chart-3"),
-        options
+      document.querySelector("#chart-3"),
+      options
     );
     chart.render();
-}
+  }
 
-/*--------------Widget Chart 4----------------*/
-var options = {
+  /*--------------Widget Chart 4----------------*/
+  var options = {
     chart: {
-        height: 80,
-        type: 'area',
-        sparkline: {
-            enabled: true
-        },
-        group: 'sparklines',
+      height: 80,
+      type: 'area',
+      sparkline: {
+        enabled: true
+      },
+      group: 'sparklines',
 
     },
     dataLabels: {
-        enabled: false
+      enabled: false
     },
     stroke: {
-        width: 3,
-        curve: 'smooth'
+      width: 3,
+      curve: 'smooth'
     },
     fill: {
-        type: 'gradient',
-        gradient: {
-            shadeIntensity: 1,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-        }
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.5,
+        opacityTo: 0,
+      }
     },
     series: [{
-        name: 'series1',
-        data: [75, 30, 60, 35, 60]
-    }, ],
+      name: 'series1',
+      data: [75, 30, 60, 35, 60]
+    },],
     colors: ['#ff9b8a'],
 
     xaxis: {
-        type: 'datetime',
-        categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
+      type: 'datetime',
+      categories: ["2018-08-19T00:00:00", "2018-09-19T01:30:00", "2018-10-19T02:30:00", "2018-11-19T01:30:00", "2018-12-19T01:30:00"],
     },
     tooltip: {
-        x: {
-            format: 'dd/MM/yy HH:mm'
-        },
+      x: {
+        format: 'dd/MM/yy HH:mm'
+      },
     }
-};
+  };
 
-if(jQuery('#chart-4').length){
+  if (jQuery('#chart-4').length) {
     var chart = new ApexCharts(
-        document.querySelector("#chart-4"),
-        options
+      document.querySelector("#chart-4"),
+      options
     );
 
     chart.render();
-}
+  }
 
-/*--------------Widget Box----------------*/
+  /*--------------Widget Box----------------*/
 
-if(jQuery('#iq-chart-box1').length){
+  if (jQuery('#iq-chart-box1').length) {
     var options = {
       series: [{
         name: "Total sales",
         data: [10, 10, 35, 10]
-    }],
+      }],
       colors: ["#50b5ff"],
       chart: {
-      height: 50,
-      width: 100,
-      type: 'line',
-      sparkline: {
+        height: 50,
+        width: 100,
+        type: 'line',
+        sparkline: {
           enabled: true,
+        },
+        zoom: {
+          enabled: false
+        }
       },
-      zoom: {
+      dataLabels: {
         enabled: false
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'straight'
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar'],
-    }
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#iq-chart-box1"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if(jQuery('#iq-chart-box2').length){
+  if (jQuery('#iq-chart-box2').length) {
     var options = {
       series: [{
         name: "Sale Today",
         data: [10, 10, 35, 10]
-    }],
+      }],
       colors: ["#ff9b8a"],
       chart: {
-      height: 50,
-      width: 100,
-      type: 'line',
-      sparkline: {
+        height: 50,
+        width: 100,
+        type: 'line',
+        sparkline: {
           enabled: true,
+        },
+        zoom: {
+          enabled: false
+        }
       },
-      zoom: {
+      dataLabels: {
         enabled: false
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'straight'
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar'],
-    }
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#iq-chart-box2"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if(jQuery('#iq-chart-box3').length){
+  if (jQuery('#iq-chart-box3').length) {
     var options = {
       series: [{
         name: "Total Classon",
         data: [10, 10, 35, 10]
-    }],
+      }],
       colors: ["#49f0d3"],
       chart: {
-      height: 50,
-      width: 100,
-      type: 'line',
-      sparkline: {
+        height: 50,
+        width: 100,
+        type: 'line',
+        sparkline: {
           enabled: true,
+        },
+        zoom: {
+          enabled: false
+        }
       },
-      zoom: {
+      dataLabels: {
         enabled: false
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'straight'
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar'],
-    }
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#iq-chart-box3"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if(jQuery('#iq-chart-box4').length){
+  if (jQuery('#iq-chart-box4').length) {
     var options = {
       series: [{
         name: "Total Profit",
         data: [10, 10, 35, 10]
-    }],
+      }],
       colors: ["#fd7e14"],
       chart: {
-      height: 50,
-      width: 100,
-      type: 'line',
-      sparkline: {
+        height: 50,
+        width: 100,
+        type: 'line',
+        sparkline: {
           enabled: true,
+        },
+        zoom: {
+          enabled: false
+        }
       },
-      zoom: {
+      dataLabels: {
         enabled: false
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'straight'
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar'],
-    }
+      stroke: {
+        curve: 'straight'
+      },
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#iq-chart-box4"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
+  /*--------------Widget End----------------*/
 
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-/*--------------Widget End----------------*/
-
-/*-------------- Widget Chart ----------------*/
-if (jQuery("#ethernet-chart-01").length) {
+  /*-------------- Widget Chart ----------------*/
+  if (jQuery("#ethernet-chart-01").length) {
     var options = {
       series: [{
         name: "Desktops",
         data: [5, 30, 6, 20, 5, 18, 10]
-    }],
-    colors: ['#4788ff'],
+      }],
+      colors: ['#4788ff'],
       chart: {
-      height: 60,
-      width: 100,
-      type: 'line',
-      zoom: {
+        height: 60,
+        width: 100,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      sparkline: {
-        enabled: true,
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#ethernet-chart-01"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#ethernet-chart-02").length) {
+  if (jQuery("#ethernet-chart-02").length) {
     var options = {
       series: [{
         name: "Desktops",
         data: [5, 20, 4, 18, 3, 15, 10]
-    }],
-    colors: ['#1ee2ac'],
+      }],
+      colors: ['#1ee2ac'],
       chart: {
-      height: 60,
-      width: 100,
-      type: 'line',
-      zoom: {
+        height: 60,
+        width: 100,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      sparkline: {
-        enabled: true,
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#ethernet-chart-02"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#ethernet-chart-03").length) {
+  if (jQuery("#ethernet-chart-03").length) {
     var options = {
       series: [{
         name: "Desktops",
         data: [5, 20, 6, 18, 5, 15, 4]
-    }],
-    colors: ['#ff4b4b'],
+      }],
+      colors: ['#ff4b4b'],
       chart: {
-      height: 60,
-      width: 100,
-      type: 'line',
-      zoom: {
+        height: 60,
+        width: 100,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      sparkline: {
-        enabled: true,
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#ethernet-chart-03"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
-
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
-if (jQuery("#ethernet-chart-04").length) {
+  if (jQuery("#ethernet-chart-04").length) {
     var options = {
       series: [{
         name: "Desktops",
         data: [5, 15, 3, 20, 5, 18, 13]
-    }],
-    colors: ['#4788ff'],
+      }],
+      colors: ['#4788ff'],
       chart: {
-      height: 60,
-      width: 100,
-      type: 'line',
-      zoom: {
+        height: 60,
+        width: 100,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      sparkline: {
-        enabled: true,
-      }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
+      title: {
+        text: '',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      }
     };
 
     var chart = new ApexCharts(document.querySelector("#ethernet-chart-04"), options);
     chart.render();
-  const body = document.querySelector('body')
-  if (body.classList.contains('dark')) {
-    apexChartUpdate(chart, {
-      dark: true
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
     })
   }
 
-  document.addEventListener('ChangeColorMode', function (e) {
-    apexChartUpdate(chart, e.detail)
-  })
-}
+  /*-------------- Widget Chart End ----------------*/
 
-/*-------------- Widget Chart End ----------------*/
-
-/*--------------Widget Chart ----------------*/
-function getNewSeries(e, t) {
-  var a = e + TICKINTERVAL;
-  lastDate = a;
-  for (var n = 0; n < data.length - 10; n++) data[n].x = a - XAXISRANGE - TICKINTERVAL, data[n].y = 0;
-  data.push({
-    x: a,
-    y: Math.floor(Math.random() * (t.max - t.min + 1)) + t.min
-  })
-}
-if (jQuery("#chart-9").length) {
+  /*--------------Widget Chart ----------------*/
+  function getNewSeries(e, t) {
+    var a = e + TICKINTERVAL;
+    lastDate = a;
+    for (var n = 0; n < data.length - 10; n++) data[n].x = a - XAXISRANGE - TICKINTERVAL, data[n].y = 0;
+    data.push({
+      x: a,
+      y: Math.floor(Math.random() * (t.max - t.min + 1)) + t.min
+    })
+  }
+  if (jQuery("#chart-9").length) {
     var chart9 = new ApexCharts(document.querySelector("#chart-9"), options);
-    chart9.render(), window.setInterval(function() {
-        getNewSeries(lastDate, {
-            min: 10,
-            max: 90
-        }), jQuery("#chart-9").length && chart9.updateSeries([{
-            data: data
-        }])
+    chart9.render(), window.setInterval(function () {
+      getNewSeries(lastDate, {
+        min: 10,
+        max: 90
+      }), jQuery("#chart-9").length && chart9.updateSeries([{
+        data: data
+      }])
     }, 1e3)
-}
+  }
 
-function generateData(e, t, a) {
+  function generateData(e, t, a) {
     for (var n = 0, o = []; n < t;) {
-        var r = Math.floor(750 * Math.random()) + 1,
-            i = Math.floor(Math.random() * (a.max - a.min + 1)) + a.min,
-            c = Math.floor(61 * Math.random()) + 15;
-        o.push([r, i, c]), 864e5, n++
+      var r = Math.floor(750 * Math.random()) + 1,
+        i = Math.floor(Math.random() * (a.max - a.min + 1)) + a.min,
+        c = Math.floor(61 * Math.random()) + 15;
+      o.push([r, i, c]), 864e5, n++
     }
     return o
-}
-options = {
+  }
+  options = {
     chart: {
-        height: 440,
-        type: "bubble",
-        stacked: !1,
-        toolbar: {
-            show: !1
-        },
-        animations: {
-            enabled: !0,
-            easing: "linear",
-            dynamicAnimation: {
-                speed: 1e3
-            }
-        },
-        sparkline: {
-            enabled: !0
-        },
-        group: "sparklines"
+      height: 440,
+      type: "bubble",
+      stacked: !1,
+      toolbar: {
+        show: !1
+      },
+      animations: {
+        enabled: !0,
+        easing: "linear",
+        dynamicAnimation: {
+          speed: 1e3
+        }
+      },
+      sparkline: {
+        enabled: !0
+      },
+      group: "sparklines"
     },
     dataLabels: {
-        enabled: !1
+      enabled: !1
     },
     series: [{
-        name: "Bubble1",
-        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
-            min: 10,
-            max: 60
-        })
+      name: "Bubble1",
+      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
+        min: 10,
+        max: 60
+      })
     }, {
-        name: "Bubble2",
-        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
-            min: 10,
-            max: 60
-        })
+      name: "Bubble2",
+      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
+        min: 10,
+        max: 60
+      })
     }, {
-        name: "Bubble3",
-        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
-            min: 10,
-            max: 60
-        })
+      name: "Bubble3",
+      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
+        min: 10,
+        max: 60
+      })
     }, {
-        name: "Bubble4",
-        data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
-            min: 10,
-            max: 60
-        })
+      name: "Bubble4",
+      data: generateData(new Date("11 Feb 2017 GMT").getTime(), 10, {
+        min: 10,
+        max: 60
+      })
     }],
     fill: {
-        opacity: .8
+      opacity: .8
     },
     title: {
-        show: !1
+      show: !1
     },
     xaxis: {
-        tickAmount: 8,
-        type: "category",
-        labels: {
-            show: !1
-        }
+      tickAmount: 8,
+      type: "category",
+      labels: {
+        show: !1
+      }
     },
     yaxis: {
-        max: 70,
-        labels: {
-            show: !1
-        }
+      max: 70,
+      labels: {
+        show: !1
+      }
     },
     legend: {
-        show: !1
+      show: !1
     }
-};
+  };
 
-/*-------------- Widget Chart End ----------------*/
-  
-/*---------------------------------------------------------------------
-   Editable Table
------------------------------------------------------------------------*/
-const $tableID = $('#table');
- const $BTN = $('#export-btn');
- const $EXPORT = $('#export');
+  /*-------------- Widget Chart End ----------------*/
 
- const newTr = `
+  /*---------------------------------------------------------------------
+     Editable Table
+  -----------------------------------------------------------------------*/
+  const $tableID = $('#table');
+  const $BTN = $('#export-btn');
+  const $EXPORT = $('#export');
+
+  const newTr = `
 <tr class="hide">
   <td class="pt-3-half" contenteditable="true">Example</td>
   <td class="pt-3-half" contenteditable="true">Example</td>
@@ -4610,79 +4610,79 @@ const $tableID = $('#table');
   </td>
 </tr>`;
 
- $('.table-add').on('click', 'i', () => {
+  $('.table-add').on('click', 'i', () => {
 
-   const $clone = $tableID.find('tbody tr').last().clone(true).removeClass('hide table-line');
+    const $clone = $tableID.find('tbody tr').last().clone(true).removeClass('hide table-line');
 
-   if ($tableID.find('tbody tr').length === 0) {
+    if ($tableID.find('tbody tr').length === 0) {
 
-     $('tbody').append(newTr);
-   }
+      $('tbody').append(newTr);
+    }
 
-   $tableID.find('table').append($clone);
- });
+    $tableID.find('table').append($clone);
+  });
 
- $tableID.on('click', '.table-remove', function () {
+  $tableID.on('click', '.table-remove', function () {
 
-   $(this).parents('tr').detach();
- });
+    $(this).parents('tr').detach();
+  });
 
- $tableID.on('click', '.table-up', function () {
+  $tableID.on('click', '.table-up', function () {
 
-   const $row = $(this).parents('tr');
+    const $row = $(this).parents('tr');
 
-   if ($row.index() === 1) {
-     return;
-   }
+    if ($row.index() === 1) {
+      return;
+    }
 
-   $row.prev().before($row.get(0));
- });
+    $row.prev().before($row.get(0));
+  });
 
- $tableID.on('click', '.table-down', function () {
+  $tableID.on('click', '.table-down', function () {
 
-   const $row = $(this).parents('tr');
-   $row.next().after($row.get(0));
- });
+    const $row = $(this).parents('tr');
+    $row.next().after($row.get(0));
+  });
 
- // A few jQuery helpers for exporting only
- jQuery.fn.pop = [].pop;
- jQuery.fn.shift = [].shift;
+  // A few jQuery helpers for exporting only
+  jQuery.fn.pop = [].pop;
+  jQuery.fn.shift = [].shift;
 
- $BTN.on('click', () => {
+  $BTN.on('click', () => {
 
-   const $rows = $tableID.find('tr:not(:hidden)');
-   const headers = [];
-   const data = [];
+    const $rows = $tableID.find('tr:not(:hidden)');
+    const headers = [];
+    const data = [];
 
-   // Get the headers (add special header logic here)
-   $($rows.shift()).find('th:not(:empty)').each(function () {
+    // Get the headers (add special header logic here)
+    $($rows.shift()).find('th:not(:empty)').each(function () {
 
-     headers.push($(this).text().toLowerCase());
-   });
+      headers.push($(this).text().toLowerCase());
+    });
 
-   // Turn all existing rows into a loopable array
-   $rows.each(function () {
-     const $td = $(this).find('td');
-     const h = {};
+    // Turn all existing rows into a loopable array
+    $rows.each(function () {
+      const $td = $(this).find('td');
+      const h = {};
 
-     // Use the headers from earlier to name our hash keys
-     headers.forEach((header, i) => {
+      // Use the headers from earlier to name our hash keys
+      headers.forEach((header, i) => {
 
-       h[header] = $td.eq(i).text();
-     });
+        h[header] = $td.eq(i).text();
+      });
 
-     data.push(h);
-   });
+      data.push(h);
+    });
 
-   // Output the result
-   $EXPORT.text(JSON.stringify(data));
- });
+    // Output the result
+    $EXPORT.text(JSON.stringify(data));
+  });
 
-/*---------------------------------------------------------------------
-    Form Wizard - 1
------------------------------------------------------------------------*/
+  /*---------------------------------------------------------------------
+      Form Wizard - 1
+  -----------------------------------------------------------------------*/
 
-$(document).ready(function(){
+  $(document).ready(function () {
 
     var current_fs, next_fs, previous_fs; //fieldsets
     var opacity;
@@ -4691,129 +4691,129 @@ $(document).ready(function(){
 
     setProgressBar(current);
 
-    $(".next").click(function(){
+    $(".next").click(function () {
 
-    current_fs = $(this).parent();
-    next_fs = $(this).parent().next();
+      current_fs = $(this).parent();
+      next_fs = $(this).parent().next();
 
-    //Add Class Active
-    $("#top-tab-list li").eq($("fieldset").index(next_fs)).addClass("active");
-    $("#top-tab-list li").eq($("fieldset").index(current_fs)).addClass("done");
+      //Add Class Active
+      $("#top-tab-list li").eq($("fieldset").index(next_fs)).addClass("active");
+      $("#top-tab-list li").eq($("fieldset").index(current_fs)).addClass("done");
 
-    //show the next fieldset
-    next_fs.show();
-    //hide the current fieldset with style
-    current_fs.animate({opacity: 0}, {
-    step: function(now) {
-    // for making fielset appear animation
-    opacity = 1 - now;
+      //show the next fieldset
+      next_fs.show();
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now) {
+          // for making fielset appear animation
+          opacity = 1 - now;
 
-    current_fs.css({
-    'display': 'none',
-    'position': 'relative',
+          current_fs.css({
+            'display': 'none',
+            'position': 'relative',
 
+          });
+
+          next_fs.css({ 'opacity': opacity });
+        },
+        duration: 500
+      });
+      setProgressBar(++current);
     });
 
-    next_fs.css({'opacity': opacity});
-    },
-    duration: 500
-    });
-    setProgressBar(++current);
-    });
+    $(".previous").click(function () {
 
-    $(".previous").click(function(){
+      current_fs = $(this).parent();
+      previous_fs = $(this).parent().prev();
 
-    current_fs = $(this).parent();
-    previous_fs = $(this).parent().prev();
+      //Remove class active
+      $("#top-tab-list li").eq($("fieldset").index(current_fs)).removeClass("active");
+      $("#top-tab-list li").eq($("fieldset").index(previous_fs)).removeClass("done");
 
-    //Remove class active
-    $("#top-tab-list li").eq($("fieldset").index(current_fs)).removeClass("active");
-    $("#top-tab-list li").eq($("fieldset").index(previous_fs)).removeClass("done");
+      //show the previous fieldset
+      previous_fs.show();
 
-    //show the previous fieldset
-    previous_fs.show();
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now) {
+          // for making fielset appear animation
+          opacity = 1 - now;
 
-    //hide the current fieldset with style
-    current_fs.animate({opacity: 0}, {
-    step: function(now) {
-    // for making fielset appear animation
-    opacity = 1 - now;
-
-    current_fs.css({
-    'display': 'none',
-    'position': 'relative'
-    });
-    previous_fs.css({'opacity': opacity});
-    },
-    duration: 500
-    });
-    setProgressBar(--current);
+          current_fs.css({
+            'display': 'none',
+            'position': 'relative'
+          });
+          previous_fs.css({ 'opacity': opacity });
+        },
+        duration: 500
+      });
+      setProgressBar(--current);
     });
 
-    function setProgressBar(curStep){
-    var percent = parseFloat(100 / steps) * curStep;
-    percent = percent.toFixed();
-    $(".progress-bar")
-    .css("width",percent+"%")
+    function setProgressBar(curStep) {
+      var percent = parseFloat(100 / steps) * curStep;
+      percent = percent.toFixed();
+      $(".progress-bar")
+        .css("width", percent + "%")
     }
 
-    $(".submit").click(function(){
-    return false;
+    $(".submit").click(function () {
+      return false;
     })
 
-});
+  });
 
- /*---------------------------------------------------------------------
-   validate form wizard
------------------------------------------------------------------------*/
+  /*---------------------------------------------------------------------
+    validate form wizard
+ -----------------------------------------------------------------------*/
 
-$(document).ready(function () {
+  $(document).ready(function () {
 
     var navListItems = $('div.setup-panel div a'),
-            allWells = $('.setup-content'),
-            allNextBtn = $('.nextBtn');
+      allWells = $('.setup-content'),
+      allNextBtn = $('.nextBtn');
 
     allWells.hide();
 
     navListItems.click(function (e) {
-        e.preventDefault();
-        var $target = $($(this).attr('href')),
-                $item = $(this);
+      e.preventDefault();
+      var $target = $($(this).attr('href')),
+        $item = $(this);
 
-        if (!$item.hasClass('disabled')) {
-            navListItems.addClass('active');
-            $item.parent().addClass('active');
-            allWells.hide();
-            $target.show();
-            $target.find('input:eq(0)').focus();
-        }
+      if (!$item.hasClass('disabled')) {
+        navListItems.addClass('active');
+        $item.parent().addClass('active');
+        allWells.hide();
+        $target.show();
+        $target.find('input:eq(0)').focus();
+      }
     });
 
-    allNextBtn.click(function(){
-        var curStep = $(this).closest(".setup-content"),
-            curStepBtn = curStep.attr("id"),
-            nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
-            curInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],textarea"),
-            isValid = true;
+    allNextBtn.click(function () {
+      var curStep = $(this).closest(".setup-content"),
+        curStepBtn = curStep.attr("id"),
+        nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+        curInputs = curStep.find("input[type='text'],input[type='email'],input[type='password'],input[type='url'],textarea"),
+        isValid = true;
 
-        $(".form-group").removeClass("has-error");
-        for(var i=0; i<curInputs.length; i++){
-            if (!curInputs[i].validity.valid){
-                isValid = false;
-                $(curInputs[i]).closest(".form-group").addClass("has-error");
-            }
+      $(".form-group").removeClass("has-error");
+      for (var i = 0; i < curInputs.length; i++) {
+        if (!curInputs[i].validity.valid) {
+          isValid = false;
+          $(curInputs[i]).closest(".form-group").addClass("has-error");
         }
+      }
 
-        if (isValid)
-            nextStepWizard.removeAttr('disabled').trigger('click');
+      if (isValid)
+        nextStepWizard.removeAttr('disabled').trigger('click');
     });
 
     $('div.setup-panel div a.active').trigger('click');
-});
- /*---------------------------------------------------------------------
-   Vertical form wizard
------------------------------------------------------------------------*/
-$(document).ready(function(){
+  });
+  /*---------------------------------------------------------------------
+    Vertical form wizard
+ -----------------------------------------------------------------------*/
+  $(document).ready(function () {
 
     var current_fs, next_fs, previous_fs; //fieldsets
     var opacity;
@@ -4822,156 +4822,156 @@ $(document).ready(function(){
 
     setProgressBar(current);
 
-    $(".next").click(function(){
+    $(".next").click(function () {
 
-    current_fs = $(this).parent();
-    next_fs = $(this).parent().next();
+      current_fs = $(this).parent();
+      next_fs = $(this).parent().next();
 
-    //Add Class Active
-    $("#top-tabbar-vertical li").eq($("fieldset").index(next_fs)).addClass("active");
+      //Add Class Active
+      $("#top-tabbar-vertical li").eq($("fieldset").index(next_fs)).addClass("active");
 
-    //show the next fieldset
-    next_fs.show();
-    //hide the current fieldset with style
-    current_fs.animate({opacity: 0}, {
-    step: function(now) {
-    // for making fielset appear animation
-    opacity = 1 - now;
+      //show the next fieldset
+      next_fs.show();
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now) {
+          // for making fielset appear animation
+          opacity = 1 - now;
 
-    current_fs.css({
-    'display': 'none',
-    'position': 'relative'
-    });
-    next_fs.css({'opacity': opacity});
-    },
-    duration: 500
-    });
-    setProgressBar(++current);
-    });
-
-    $(".previous").click(function(){
-
-    current_fs = $(this).parent();
-    previous_fs = $(this).parent().prev();
-
-    //Remove class active
-    $("#top-tabbar-vertical li").eq($("fieldset").index(current_fs)).removeClass("active");
-
-    //show the previous fieldset
-    previous_fs.show();
-
-    //hide the current fieldset with style
-    current_fs.animate({opacity: 0}, {
-    step: function(now) {
-    // for making fielset appear animation
-    opacity = 1 - now;
-
-    current_fs.css({
-    'display': 'none',
-    'position': 'relative'
-    });
-    previous_fs.css({'opacity': opacity});
-    },
-    duration: 500
-    });
-    setProgressBar(--current);
+          current_fs.css({
+            'display': 'none',
+            'position': 'relative'
+          });
+          next_fs.css({ 'opacity': opacity });
+        },
+        duration: 500
+      });
+      setProgressBar(++current);
     });
 
-    function setProgressBar(curStep){
-    var percent = parseFloat(100 / steps) * curStep;
-    percent = percent.toFixed();
-    $(".progress-bar")
-    .css("width",percent+"%")
+    $(".previous").click(function () {
+
+      current_fs = $(this).parent();
+      previous_fs = $(this).parent().prev();
+
+      //Remove class active
+      $("#top-tabbar-vertical li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+      //show the previous fieldset
+      previous_fs.show();
+
+      //hide the current fieldset with style
+      current_fs.animate({ opacity: 0 }, {
+        step: function (now) {
+          // for making fielset appear animation
+          opacity = 1 - now;
+
+          current_fs.css({
+            'display': 'none',
+            'position': 'relative'
+          });
+          previous_fs.css({ 'opacity': opacity });
+        },
+        duration: 500
+      });
+      setProgressBar(--current);
+    });
+
+    function setProgressBar(curStep) {
+      var percent = parseFloat(100 / steps) * curStep;
+      percent = percent.toFixed();
+      $(".progress-bar")
+        .css("width", percent + "%")
     }
 
-    $(".submit").click(function(){
-    return false;
+    $(".submit").click(function () {
+      return false;
     })
 
-});
-
-
-/*---------------------------------------------------------------------
-   Profile Image Edit
------------------------------------------------------------------------*/
-
-$(document).ready(function() {
-    var readURL = function(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                $('.profile-pic').attr('src', e.target.result);
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-
-    $(".file-upload").on('change', function(){
-        readURL(this);
-    });
-
-    $(".upload-button").on('click', function() {
-       $(".file-upload").click();
-    });
-});
-
-// ratting
-$(function() {
-  if(typeof $.fn.barrating !== typeof undefined){
-    $('#example').barrating({
-      theme: 'fontawesome-stars'
-    });
-    $('#bars-number').barrating({
-      theme: 'bars-1to10'
-    });
-    $('#movie-rating').barrating('show',{
-      theme: 'bars-movie'
-    });
-    $('#movie-rating').barrating('set', 'Mediocre');
-    $('#pill-rating').barrating({
-      theme: 'bars-pill',
-      showValues: true,
-      showSelectedRating: false,
-      onSelect: function(value, text) {
-        alert('Selected rating: ' + value);
-    }
-    });
-  } 
-  if (typeof $.fn.mdbRate !== typeof undefined) {
-    $('#rateMe1').mdbRate();
-    $('#face-rating').mdbRate();
-  }
-});
-
-// quill
-if (jQuery("#editor").length) {
-  var quill = new Quill('#editor', {
-  theme: 'snow'
   });
-}
+
+
+  /*---------------------------------------------------------------------
+     Profile Image Edit
+  -----------------------------------------------------------------------*/
+
+  $(document).ready(function () {
+    var readURL = function (input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          $('.profile-pic').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+
+    $(".file-upload").on('change', function () {
+      readURL(this);
+    });
+
+    $(".upload-button").on('click', function () {
+      $(".file-upload").click();
+    });
+  });
+
+  // ratting
+  $(function () {
+    if (typeof $.fn.barrating !== typeof undefined) {
+      $('#example').barrating({
+        theme: 'fontawesome-stars'
+      });
+      $('#bars-number').barrating({
+        theme: 'bars-1to10'
+      });
+      $('#movie-rating').barrating('show', {
+        theme: 'bars-movie'
+      });
+      $('#movie-rating').barrating('set', 'Mediocre');
+      $('#pill-rating').barrating({
+        theme: 'bars-pill',
+        showValues: true,
+        showSelectedRating: false,
+        onSelect: function (value, text) {
+          alert('Selected rating: ' + value);
+        }
+      });
+    }
+    if (typeof $.fn.mdbRate !== typeof undefined) {
+      $('#rateMe1').mdbRate();
+      $('#face-rating').mdbRate();
+    }
+  });
+
+  // quill
+  if (jQuery("#editor").length) {
+    var quill = new Quill('#editor', {
+      theme: 'snow'
+    });
+  }
   // With Tooltip
   if (jQuery("#quill-toolbar").length) {
-  var quill = new Quill('#quill-toolbar', {
+    var quill = new Quill('#quill-toolbar', {
       modules: {
         toolbar: '#quill-tool'
       },
       placeholder: 'Compose an epic...',
       theme: 'snow'
-  });
-  // Enable all tooltips
-  $('[data-toggle="tooltip"]').tooltip();
+    });
+    // Enable all tooltips
+    $('[data-toggle="tooltip"]').tooltip();
 
-  // Can control programmatically too
-  $('.ql-italic').mouseover();
-  setTimeout(function() {
+    // Can control programmatically too
+    $('.ql-italic').mouseover();
+    setTimeout(function () {
       $('.ql-italic').mouseout();
-  }, 2500);
-}
+    }, 2500);
+  }
   // file upload
-  $(".custom-file-input").on("change", function() {
+  $(".custom-file-input").on("change", function () {
     var fileName = $(this).val().split("\\").pop();
     $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
   });
@@ -5188,189 +5188,189 @@ if (jQuery("#editor").length) {
         dark: true
       })
     }
-  
+
     document.addEventListener('ChangeColorMode', function (e) {
       apexChartUpdate(chart, e.detail)
     })
   }
-  if(jQuery('#layout1-chart-2').length){
-    am4core.ready(function() {
+  if (jQuery('#layout1-chart-2').length) {
+    am4core.ready(function () {
 
-    // Themes begin
-    am4core.useTheme(am4themes_animated);
-    // Themes end
-    
-    // Create chart instance
-    var chart = am4core.create("layout1-chart-2", am4charts.XYChart);
-    chart.colors.list = [
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA"),
-		  am4core.color("#32BDEA")
-		];
-    chart.scrollbarX = new am4core.Scrollbar();
-    
-    // Add data
-    chart.data = [{
-      "country": "Jan",
-      "visits": 3025
-    }, {
-      "country": "Feb",
-      "visits": 1882
-    }, {
-      "country": "Mar",
-      "visits": 1809
-    }, {
-      "country": "Apr",
-      "visits": 1322
-    }, {
-      "country": "May",
-      "visits": 1122
-    }, {
-      "country": "Jun",
-      "visits": 1114
-    }, {
-      "country": "Jul",
-      "visits": 984
-    }, {
-      "country": "Aug",
-      "visits": 711
-    }];
-    
-    prepareParetoData();
-    
-    function prepareParetoData(){
+      // Themes begin
+      am4core.useTheme(am4themes_animated);
+      // Themes end
+
+      // Create chart instance
+      var chart = am4core.create("layout1-chart-2", am4charts.XYChart);
+      chart.colors.list = [
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA"),
+        am4core.color("#32BDEA")
+      ];
+      chart.scrollbarX = new am4core.Scrollbar();
+
+      // Add data
+      chart.data = [{
+        "country": "Jan",
+        "visits": 3025
+      }, {
+        "country": "Feb",
+        "visits": 1882
+      }, {
+        "country": "Mar",
+        "visits": 1809
+      }, {
+        "country": "Apr",
+        "visits": 1322
+      }, {
+        "country": "May",
+        "visits": 1122
+      }, {
+        "country": "Jun",
+        "visits": 1114
+      }, {
+        "country": "Jul",
+        "visits": 984
+      }, {
+        "country": "Aug",
+        "visits": 711
+      }];
+
+      prepareParetoData();
+
+      function prepareParetoData() {
         var total = 0;
-    
-        for(var i = 0; i < chart.data.length; i++){
-            var value = chart.data[i].visits;
-            total += value;
-        }
-    
-        var sum = 0;
-        for(var i = 0; i < chart.data.length; i++){
-            var value = chart.data[i].visits;
-            sum += value;   
-            chart.data[i].pareto = sum / total * 100;
-        }    
-    }
-    
-    // Create axes
-    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-    categoryAxis.dataFields.category = "country";
-    categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.renderer.minGridDistance = 60;
-    categoryAxis.tooltip.disabled = true;
-    
-    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    valueAxis.renderer.minWidth = 50;
-    valueAxis.min = 0;
-    valueAxis.cursorTooltipEnabled = false;
 
-    // Create series
-    var series = chart.series.push(new am4charts.ColumnSeries());
-    series.sequencedInterpolation = true;
-    series.dataFields.valueY = "visits";
-    series.dataFields.categoryX = "country";
-    series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
-    series.columns.template.strokeWidth = 0;
-    
-    series.tooltip.pointerOrientation = "vertical";
-    
-    series.columns.template.column.cornerRadiusTopLeft = 10;
-    series.columns.template.column.cornerRadiusTopRight = 10;
-    series.columns.template.column.fillOpacity = 0.8;
-    
-    // on hover, make corner radiuses bigger
-    var hoverState = series.columns.template.column.states.create("hover");
-    hoverState.properties.cornerRadiusTopLeft = 0;
-    hoverState.properties.cornerRadiusTopRight = 0;
-    hoverState.properties.fillOpacity = 1;
-    
-    series.columns.template.adapter.add("fill", function(fill, target) {
-      return chart.colors.getIndex(target.dataItem.index);
-    })
-    
-    
-    var paretoValueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    paretoValueAxis.renderer.opposite = true;
-    paretoValueAxis.min = 0;
-    paretoValueAxis.max = 100;
-    paretoValueAxis.strictMinMax = true;
-    paretoValueAxis.renderer.grid.template.disabled = true;
-    paretoValueAxis.numberFormatter = new am4core.NumberFormatter();
-    paretoValueAxis.numberFormatter.numberFormat = "#'%'"
-    paretoValueAxis.cursorTooltipEnabled = false;
-    
-    var paretoSeries = chart.series.push(new am4charts.LineSeries())
-    paretoSeries.dataFields.valueY = "pareto";
-    paretoSeries.dataFields.categoryX = "country";
-    paretoSeries.yAxis = paretoValueAxis;
-    paretoSeries.tooltipText = "pareto: {valueY.formatNumber('#.0')}%[/]";
-    paretoSeries.bullets.push(new am4charts.CircleBullet());
-    paretoSeries.strokeWidth = 2;
-    paretoSeries.stroke = new am4core.InterfaceColorSet().getFor("alternativeBackground");
-    paretoSeries.strokeOpacity = 0.5;
-    
-    // Cursor
-    chart.cursor = new am4charts.XYCursor();
-    chart.cursor.behavior = "panX";
-    
+        for (var i = 0; i < chart.data.length; i++) {
+          var value = chart.data[i].visits;
+          total += value;
+        }
+
+        var sum = 0;
+        for (var i = 0; i < chart.data.length; i++) {
+          var value = chart.data[i].visits;
+          sum += value;
+          chart.data[i].pareto = sum / total * 100;
+        }
+      }
+
+      // Create axes
+      var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+      categoryAxis.dataFields.category = "country";
+      categoryAxis.renderer.grid.template.location = 0;
+      categoryAxis.renderer.minGridDistance = 60;
+      categoryAxis.tooltip.disabled = true;
+
+      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.renderer.minWidth = 50;
+      valueAxis.min = 0;
+      valueAxis.cursorTooltipEnabled = false;
+
+      // Create series
+      var series = chart.series.push(new am4charts.ColumnSeries());
+      series.sequencedInterpolation = true;
+      series.dataFields.valueY = "visits";
+      series.dataFields.categoryX = "country";
+      series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+      series.columns.template.strokeWidth = 0;
+
+      series.tooltip.pointerOrientation = "vertical";
+
+      series.columns.template.column.cornerRadiusTopLeft = 10;
+      series.columns.template.column.cornerRadiusTopRight = 10;
+      series.columns.template.column.fillOpacity = 0.8;
+
+      // on hover, make corner radiuses bigger
+      var hoverState = series.columns.template.column.states.create("hover");
+      hoverState.properties.cornerRadiusTopLeft = 0;
+      hoverState.properties.cornerRadiusTopRight = 0;
+      hoverState.properties.fillOpacity = 1;
+
+      series.columns.template.adapter.add("fill", function (fill, target) {
+        return chart.colors.getIndex(target.dataItem.index);
+      })
+
+
+      var paretoValueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      paretoValueAxis.renderer.opposite = true;
+      paretoValueAxis.min = 0;
+      paretoValueAxis.max = 100;
+      paretoValueAxis.strictMinMax = true;
+      paretoValueAxis.renderer.grid.template.disabled = true;
+      paretoValueAxis.numberFormatter = new am4core.NumberFormatter();
+      paretoValueAxis.numberFormatter.numberFormat = "#'%'"
+      paretoValueAxis.cursorTooltipEnabled = false;
+
+      var paretoSeries = chart.series.push(new am4charts.LineSeries())
+      paretoSeries.dataFields.valueY = "pareto";
+      paretoSeries.dataFields.categoryX = "country";
+      paretoSeries.yAxis = paretoValueAxis;
+      paretoSeries.tooltipText = "pareto: {valueY.formatNumber('#.0')}%[/]";
+      paretoSeries.bullets.push(new am4charts.CircleBullet());
+      paretoSeries.strokeWidth = 2;
+      paretoSeries.stroke = new am4core.InterfaceColorSet().getFor("alternativeBackground");
+      paretoSeries.strokeOpacity = 0.5;
+
+      // Cursor
+      chart.cursor = new am4charts.XYCursor();
+      chart.cursor.behavior = "panX";
+
     }); // end am4core.ready()
   }
-  if (jQuery("#layout1-chart-3").length) {    
+  if (jQuery("#layout1-chart-3").length) {
     options = {
       series: [{
         name: "Desktops",
         data: [17, 23, 15, 28, 22, 32]
-    }],
-    colors: ['#FF7E41'],
+      }],
+      colors: ['#FF7E41'],
       chart: {
-      height: 150,
-      type: 'line',
-      zoom: {
+        height: 150,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        dropShadow: {
+          enabled: true,
+          color: '#000',
+          top: 12,
+          left: 1,
+          blur: 2,
+          opacity: 0.2
+        },
+        toolbar: {
+          show: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      dropShadow: {
-        enabled: true,
-        color: '#000',
-        top: 12,
-        left: 1,
-        blur: 2,
-        opacity: 0.2
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-      toolbar: {
-        show: false
+      title: {
+        text: '',
+        align: 'left'
       },
-      sparkline: {
-        enabled: true,
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
-      },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
     };
     const chart = new ApexCharts(document.querySelector("#layout1-chart-3"), options);
     chart.render();
@@ -5385,54 +5385,54 @@ if (jQuery("#editor").length) {
       apexChartUpdate(chart, e.detail)
     })
   }
-  if (jQuery("#layout1-chart-4").length) {    
+  if (jQuery("#layout1-chart-4").length) {
     options = {
       series: [{
         name: "Desktops",
         data: [17, 23, 15, 28, 22, 32]
-    }],
-    colors: ['#32BDEA'],
+      }],
+      colors: ['#32BDEA'],
       chart: {
-      height: 150,
-      type: 'line',
-      zoom: {
+        height: 150,
+        type: 'line',
+        zoom: {
+          enabled: false
+        },
+        dropShadow: {
+          enabled: true,
+          color: '#000',
+          top: 12,
+          left: 1,
+          blur: 2,
+          opacity: 0.2
+        },
+        toolbar: {
+          show: false
+        },
+        sparkline: {
+          enabled: true,
+        }
+      },
+      dataLabels: {
         enabled: false
       },
-      dropShadow: {
-        enabled: true,
-        color: '#000',
-        top: 12,
-        left: 1,
-        blur: 2,
-        opacity: 0.2
+      stroke: {
+        curve: 'smooth',
+        width: 3
       },
-      toolbar: {
-        show: false
+      title: {
+        text: '',
+        align: 'left'
       },
-      sparkline: {
-        enabled: true,
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+        },
+      },
+      xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
-    title: {
-      text: '',
-      align: 'left'
-    },
-    grid: {
-      row: {
-        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-        opacity: 0.5
-      },
-    },
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    }
     };
     const chart = new ApexCharts(document.querySelector("#layout1-chart-4"), options);
     chart.render();
@@ -5447,42 +5447,42 @@ if (jQuery("#editor").length) {
       apexChartUpdate(chart, e.detail)
     })
   }
-  if (jQuery("#layout1-chart-5").length) {    
+  if (jQuery("#layout1-chart-5").length) {
     options = {
       series: [{
-      name: 'Total Likes',
-      data: [86, 80, 84, 95, 83, 75, 88, 76, 86, 93, 85, 65]
-    }, {
-      name: 'Total Share',
-      data: [76, 72, 76, 85, 74, 69, 80, 68, 78, 85, 77, 55]
-    }],
+        name: 'Total Likes',
+        data: [86, 80, 84, 95, 83, 75, 88, 76, 86, 93, 85, 65]
+      }, {
+        name: 'Total Share',
+        data: [76, 72, 76, 85, 74, 69, 80, 68, 78, 85, 77, 55]
+      }],
       chart: {
-      type: 'bar',
-      height: 300
-    },
-    colors: ['#32BDEA','#FF7E41'],
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '30%',
-            endingShape: 'rounded'
-          },
+        type: 'bar',
+        height: 300
+      },
+      colors: ['#32BDEA', '#FF7E41'],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '30%',
+          endingShape: 'rounded'
         },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          show: true,
-          width: 3,
-          colors: ['transparent']
-        },
-        xaxis: {
-          categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-          labels: {
-            minWidth: 0,
-            maxWidth: 0
-          }
-        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 3,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        labels: {
+          minWidth: 0,
+          maxWidth: 0
+        }
+      },
       yaxis: {
         show: true,
         labels: {
@@ -5490,16 +5490,16 @@ if (jQuery("#editor").length) {
           maxWidth: 20
         }
       },
-        fill: {
-          opacity: 1
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return "$ " + val + " thousands"
-            }
+      fill: {
+        opacity: 1
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return "$ " + val + " thousands"
           }
         }
+      }
     };
     const chart = new ApexCharts(document.querySelector("#layout1-chart-5"), options);
     chart.render();
@@ -5720,7 +5720,7 @@ if (jQuery("#editor").length) {
         dark: true
       })
     }
-  
+
     document.addEventListener('ChangeColorMode', function (e) {
       apexChartUpdate(chart, e.detail)
     })
@@ -5728,64 +5728,64 @@ if (jQuery("#editor").length) {
   if (jQuery("#report-chart02").length) {
     var options = {
       series: [
-      {
-        name: 'Desktops',
-        data: [
-          {
-            x: 'ABC',
-            y: 10
-          },
-          {
-            x: 'DEF',
-            y: 60
-          },
-          {
-            x: 'XYZ',
-            y: 41
-          }
-        ]
-      },
-      {
-        name: 'Mobile',
-        data: [
-          {
-            x: 'ABCD',
-            y: 10
-          },
-          {
-            x: 'DEFG',
-            y: 20
-          },
-          {
-            x: 'WXYZ',
-            y: 51
-          },
-          {
-            x: 'PQR',
-            y: 30
-          },
-          {
-            x: 'MNO',
-            y: 20
-          },
-          {
-            x: 'CDE',
-            y: 30
-          }
-        ]
-      }
-    ],
+        {
+          name: 'Desktops',
+          data: [
+            {
+              x: 'ABC',
+              y: 10
+            },
+            {
+              x: 'DEF',
+              y: 60
+            },
+            {
+              x: 'XYZ',
+              y: 41
+            }
+          ]
+        },
+        {
+          name: 'Mobile',
+          data: [
+            {
+              x: 'ABCD',
+              y: 10
+            },
+            {
+              x: 'DEFG',
+              y: 20
+            },
+            {
+              x: 'WXYZ',
+              y: 51
+            },
+            {
+              x: 'PQR',
+              y: 30
+            },
+            {
+              x: 'MNO',
+              y: 20
+            },
+            {
+              x: 'CDE',
+              y: 30
+            }
+          ]
+        }
+      ],
       legend: {
-      show: false
-    },
-    chart: {
-      height: 350,
-      type: 'treemap'
-    },
-    title: {
-      text: 'Multi-dimensional Treemap',
-      align: 'center'
-    }
+        show: false
+      },
+      chart: {
+        height: 350,
+        type: 'treemap'
+      },
+      title: {
+        text: 'Multi-dimensional Treemap',
+        align: 'center'
+      }
     };
 
     (chart = new ApexCharts(document.querySelector("#report-chart02"), options)).render()
@@ -5795,23 +5795,23 @@ if (jQuery("#editor").length) {
         dark: true
       })
     }
-  
+
     document.addEventListener('ChangeColorMode', function (e) {
       apexChartUpdate(chart, e.detail)
     })
   }
   if (jQuery('#report-chart2').length) {
-    am4core.ready(function() {
+    am4core.ready(function () {
 
       // Themes begin
       am4core.useTheme(am4themes_animated);
       // Themes end
-      
+
       // create chart
       var chart = am4core.create("report-chart2", am4charts.TreeMap);
       chart.hiddenState.properties.opacity = 0; // this makes initial fade in effect
-      chart.colors.list = [am4core.color("#32bdea"),am4core.color("#ff7e41"), am4core.color("#e83e8c")];
-      
+      chart.colors.list = [am4core.color("#32bdea"), am4core.color("#ff7e41"), am4core.color("#e83e8c")];
+
       chart.data = [{
         name: "First",
         children: [
@@ -5867,260 +5867,258 @@ if (jQuery("#editor").length) {
           }
         ]
       }];
-      
+
       chart.colors.step = 2;
-      
+
       // define data fields
       chart.dataFields.value = "value";
       chart.dataFields.name = "name";
       chart.dataFields.children = "children";
-      
+
       chart.zoomable = false;
       var bgColor = new am4core.InterfaceColorSet().getFor("background");
-      
+
       // level 0 series template
       var level0SeriesTemplate = chart.seriesTemplates.create("0");
       var level0ColumnTemplate = level0SeriesTemplate.columns.template;
-      
+
       level0ColumnTemplate.column.cornerRadius(10, 10, 10, 10);
       level0ColumnTemplate.fillOpacity = 0;
       level0ColumnTemplate.strokeWidth = 4;
       level0ColumnTemplate.strokeOpacity = 0;
-      
+
       // level 1 series template
       var level1SeriesTemplate = chart.seriesTemplates.create("1");
       var level1ColumnTemplate = level1SeriesTemplate.columns.template;
-      
+
       level1SeriesTemplate.tooltip.animationDuration = 0;
       level1SeriesTemplate.strokeOpacity = 1;
-      
+
       level1ColumnTemplate.column.cornerRadius(10, 10, 10, 10)
       level1ColumnTemplate.fillOpacity = 1;
       level1ColumnTemplate.strokeWidth = 4;
       level1ColumnTemplate.stroke = bgColor;
-      
+
       var bullet1 = level1SeriesTemplate.bullets.push(new am4charts.LabelBullet());
       bullet1.locationY = 0.5;
       bullet1.locationX = 0.5;
       bullet1.label.text = "{name}";
       bullet1.label.fill = am4core.color("#ffffff");
-      
+
       chart.maxLevels = 2;
-      
-      }); // end am4core.ready()
+
+    }); // end am4core.ready()
   }
   if (jQuery("#report-chart3").length) {
     options = {
       series: [
-      {
-        name: 'Bob',
-        data: [
-          {
-            x: 'Design',
-            y: [
-              new Date('2019-03-05').getTime(),
-              new Date('2019-03-08').getTime()
-            ]
-          },
-          {
-            x: 'Code',
-            y: [
-              new Date('2019-03-02').getTime(),
-              new Date('2019-03-05').getTime()
-            ]
-          },
-          {
-            x: 'Code',
-            y: [
-              new Date('2019-03-05').getTime(),
-              new Date('2019-03-07').getTime()
-            ]
-          },
-          {
-            x: 'Test',
-            y: [
-              new Date('2019-03-03').getTime(),
-              new Date('2019-03-09').getTime()
-            ]
-          },
-          {
-            x: 'Test',
-            y: [
-              new Date('2019-03-08').getTime(),
-              new Date('2019-03-11').getTime()
-            ]
-          },
-          {
-            x: 'Validation',
-            y: [
-              new Date('2019-03-11').getTime(),
-              new Date('2019-03-16').getTime()
-            ]
-          },
-          {
-            x: 'Design',
-            y: [
-              new Date('2019-03-01').getTime(),
-              new Date('2019-03-03').getTime()
-            ]
-          }
-        ]
-      },
-      {
-        name: 'Joe',
-        data: [
-          {
-            x: 'Design',
-            y: [
-              new Date('2019-03-02').getTime(),
-              new Date('2019-03-05').getTime()
-            ]
-          },
-          {
-            x: 'Test',
-            y: [
-              new Date('2019-03-06').getTime(),
-              new Date('2019-03-16').getTime()
-            ]
-          },
-          {
-            x: 'Code',
-            y: [
-              new Date('2019-03-03').getTime(),
-              new Date('2019-03-07').getTime()
-            ]
-          },
-          {
-            x: 'Deployment',
-            y: [
-              new Date('2019-03-20').getTime(),
-              new Date('2019-03-22').getTime()
-            ]
-          },
-          {
-            x: 'Design',
-            y: [
-              new Date('2019-03-10').getTime(),
-              new Date('2019-03-16').getTime()
-            ]
-          }
-        ]
-      },
-      {
-        name: 'Dan',
-        data: [
-          {
-            x: 'Code',
-            y: [
-              new Date('2019-03-10').getTime(),
-              new Date('2019-03-17').getTime()
-            ]
-          },
-          {
-            x: 'Validation',
-            y: [
-              new Date('2019-03-05').getTime(),
-              new Date('2019-03-09').getTime()
-            ]
-          },
-        ]
-      }
-    ],
+        {
+          name: 'Bob',
+          data: [
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-08').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-02').getTime(),
+                new Date('2019-03-05').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-07').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-03').getTime(),
+                new Date('2019-03-09').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-08').getTime(),
+                new Date('2019-03-11').getTime()
+              ]
+            },
+            {
+              x: 'Validation',
+              y: [
+                new Date('2019-03-11').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            },
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-01').getTime(),
+                new Date('2019-03-03').getTime()
+              ]
+            }
+          ]
+        },
+        {
+          name: 'Joe',
+          data: [
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-02').getTime(),
+                new Date('2019-03-05').getTime()
+              ]
+            },
+            {
+              x: 'Test',
+              y: [
+                new Date('2019-03-06').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            },
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-03').getTime(),
+                new Date('2019-03-07').getTime()
+              ]
+            },
+            {
+              x: 'Deployment',
+              y: [
+                new Date('2019-03-20').getTime(),
+                new Date('2019-03-22').getTime()
+              ]
+            },
+            {
+              x: 'Design',
+              y: [
+                new Date('2019-03-10').getTime(),
+                new Date('2019-03-16').getTime()
+              ]
+            }
+          ]
+        },
+        {
+          name: 'Dan',
+          data: [
+            {
+              x: 'Code',
+              y: [
+                new Date('2019-03-10').getTime(),
+                new Date('2019-03-17').getTime()
+              ]
+            },
+            {
+              x: 'Validation',
+              y: [
+                new Date('2019-03-05').getTime(),
+                new Date('2019-03-09').getTime()
+              ]
+            },
+          ]
+        }
+      ],
       chart: {
-      height: 350,
-      type: 'rangeBar'
-    },
-    colors: ['#32BDEA', '#e83e8c', '#FF7E41'],
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: '80%'
+        height: 350,
+        type: 'rangeBar'
+      },
+      colors: ['#32BDEA', '#e83e8c', '#FF7E41'],
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          barHeight: '80%'
+        }
+      },
+      xaxis: {
+        type: 'datetime'
+      },
+
+      stroke: {
+        width: 1
+      },
+      fill: {
+        type: 'solid',
+        opacity: 1
+      },
+      legend: {
+        position: 'top',
+        horizontalAlign: 'left'
       }
-    },
-    xaxis: {
-      type: 'datetime'
-    },
-    
-    stroke: {
-      width: 1
-    },
-    fill: {
-      type: 'solid',
-      opacity: 1
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'left'
-    }
     };
 
-     (chart = new ApexCharts(document.querySelector("#report-chart3"), options)).render()
-     const body = document.querySelector('body')
-     if (body.classList.contains('dark')) {
-       apexChartUpdate(chart, {
-         dark: true
-       })
-     }
-   
-     document.addEventListener('ChangeColorMode', function (e) {
-       apexChartUpdate(chart, e.detail)
-     })
+    (chart = new ApexCharts(document.querySelector("#report-chart3"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
   }
-  if (jQuery("#report-chart4").length) {   
+  if (jQuery("#report-chart4").length) {
     options = {
       series: [{
-      name: "SAMPLE A",
-      data: [
-      [16.4, 5.4], [10.9, 7.4],[10.9, 8.2], [16.4, 1.8], [13.6, 0.3],  [27.1, 2.3],  [13.6, 3.7], [10.9, 5.2], [16.4, 6.5],  [24.5, 7.1], [10.9, 0], [8.1, 4.7],  [21.7, 1.8], [29.9, 1.5], [27.1, 0.8], [22.1, 2]]
-    },{
-      name: "SAMPLE B",
-      data: [
-      [36.4, 13.4], [1.7, 11], [1.4, 7],  [3.6, 13.7], [1.9, 15.2], [6.4, 16.5], [0.9, 10], [4.5, 17.1], [10.9, 10], [0.1, 14.7], [9, 10], [12.7, 11.8], [2.1, 10], [2.5, 10], [27.1, 10], [2.9, 11.5], [7.1, 10.8], [2.1, 12]]
-    },{
-      name: "SAMPLE C",
-      data: [
-      [21.7, 3], [23.6, 3.5], [24.6, 3], [29.9, 3], [21.7, 20], [19, 5], [22.4, 3], [24.5, 3], [32.6, 3],  [21.6, 5], [20.9, 4], [22.4, 0], [32.6, 10.3], [29.7, 20.8], [24.5, 0.8], [21.4, 0], [21.7, 6.9], [28.6, 7.7]]
-    }],
+        name: "SAMPLE A",
+        data: [
+          [16.4, 5.4], [10.9, 7.4], [10.9, 8.2], [16.4, 1.8], [13.6, 0.3], [27.1, 2.3], [13.6, 3.7], [10.9, 5.2], [16.4, 6.5], [24.5, 7.1], [10.9, 0], [8.1, 4.7], [21.7, 1.8], [29.9, 1.5], [27.1, 0.8], [22.1, 2]]
+      }, {
+        name: "SAMPLE B",
+        data: [
+          [36.4, 13.4], [1.7, 11], [1.4, 7], [3.6, 13.7], [1.9, 15.2], [6.4, 16.5], [0.9, 10], [4.5, 17.1], [10.9, 10], [0.1, 14.7], [9, 10], [12.7, 11.8], [2.1, 10], [2.5, 10], [27.1, 10], [2.9, 11.5], [7.1, 10.8], [2.1, 12]]
+      }, {
+        name: "SAMPLE C",
+        data: [
+          [21.7, 3], [23.6, 3.5], [24.6, 3], [29.9, 3], [21.7, 20], [19, 5], [22.4, 3], [24.5, 3], [32.6, 3], [21.6, 5], [20.9, 4], [22.4, 0], [32.6, 10.3], [29.7, 20.8], [24.5, 0.8], [21.4, 0], [21.7, 6.9], [28.6, 7.7]]
+      }],
       chart: {
-      height: 350,
-      type: 'scatter',
-      zoom: {
-        enabled: true,
-        type: 'xy'
-      }
-    },
-    colors: ['#32BDEA', '#e83e8c', '#FF7E41'],
-    xaxis: {
-      tickAmount: 10,
-      labels: {
-        formatter: function(val) {
-          return parseFloat(val).toFixed(1)
+        height: 350,
+        type: 'scatter',
+        zoom: {
+          enabled: true,
+          type: 'xy'
+        }
+      },
+      colors: ['#32BDEA', '#e83e8c', '#FF7E41'],
+      xaxis: {
+        tickAmount: 10,
+        labels: {
+          formatter: function (val) {
+            return parseFloat(val).toFixed(1)
+          }
+        }
+      },
+      yaxis: {
+        tickAmount: 7,
+        show: true,
+        labels: {
+          minWidth: 20,
+          maxWidth: 20
         }
       }
-    },
-    yaxis: {
-      tickAmount: 7,
-      show: true,
-      labels: {
-        minWidth: 20,
-        maxWidth: 20
-      }
-    }
     };
 
-     (chart = new ApexCharts(document.querySelector("#report-chart4"), options)).render()
-     const body = document.querySelector('body')
-     if (body.classList.contains('dark')) {
-       apexChartUpdate(chart, {
-         dark: true
-       })
-     }
-   
-     document.addEventListener('ChangeColorMode', function (e) {
-       apexChartUpdate(chart, e.detail)
-     })
+    (chart = new ApexCharts(document.querySelector("#report-chart4"), options)).render()
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
   }
 
 })(jQuery);
-
-

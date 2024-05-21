@@ -1,11 +1,11 @@
 <?php
 session_start();
 
-if (isset($_SESSION['login_user'])) {
+if (isset ($_SESSION['login_user'])) {
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
     if (!$conn) {
-        die("Connection failed:" . mysqli_connect_error());
+        die ("Connection failed:" . mysqli_connect_error());
     }
 
     $email = $_SESSION['login_user'];
@@ -17,8 +17,11 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM purchase";
-    $result = mysqli_query($conn, $sql);
+    $sql = "SELECT * FROM purchase WHERE UID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     $data = array();
 
@@ -26,8 +29,38 @@ if (isset($_SESSION['login_user'])) {
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
         }
-    } else {
-        echo "0 results";
+    }
+
+    mysqli_close($conn);
+
+} elseif (isset ($_SESSION['admin_user'])) {
+    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
+
+    if (!$conn) {
+        die ("Connection failed: " . mysqli_connect_error());
+    }
+
+    $is_admin = isset ($_SESSION['admin_user']);
+
+    $email = $_SESSION['admin_user'];
+    $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
+    $fetch_stmt = $conn->prepare($fetch_query);
+    $fetch_stmt->bind_param("s", $email);
+    $fetch_stmt->execute();
+    $fetch_stmt->store_result();
+    $fetch_stmt->fetch();
+
+    $sql = "SELECT * FROM purchase";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $data = array();
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
     }
 
     mysqli_close($conn);
@@ -60,7 +93,7 @@ if (isset($_SESSION['login_user'])) {
 
         <div class="iq-sidebar  sidebar-default ">
             <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
-                <a href="../backend/index1.php" class="header-logo">
+                <a href="../backend/index.html" class="header-logo">
                     <img src="../assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
                     <h5 class="logo-title light-logo ml-3">ManageMatic</h5>
                 </a>
@@ -72,7 +105,7 @@ if (isset($_SESSION['login_user'])) {
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="iq-menu">
                         <li class="active">
-                            <a href="../backend/index1.php" class="svg-icon">
+                            <a href="../backend/dashboard.php" class="svg-icon">
                                 <svg class="svg-icon" id="p-dash1" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -138,12 +171,12 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                 <li class="">
-                                    <a href="../backend/page-list-category.html">
+                                    <a href="../backend/page-list-category.php">
                                         <i class="las la-minus"></i><span>List Category</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-category.html">
+                                    <a href="../backend/page-add-category.php">
                                         <i class="las la-minus"></i><span>Add Category</span>
                                     </a>
                                 </li>
@@ -233,12 +266,12 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="return" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                 <li class="">
-                                    <a href="../backend/page-list-returns.html">
+                                    <a href="../backend/page-list-returns.php">
                                         <i class="las la-minus"></i><span>List Returns</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-return.html">
+                                    <a href="../backend/page-add-return.php">
                                         <i class="las la-minus"></i><span>Add Return</span>
                                     </a>
                                 </li>
@@ -266,22 +299,22 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="people" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                                 <li class="">
-                                    <a href="../backend/page-list-customers.html">
+                                    <a href="../backend/page-list-customers.php">
                                         <i class="las la-minus"></i><span>Customers</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-customers.html">
+                                    <a href="../backend/page-add-customers.php">
                                         <i class="las la-minus"></i><span>Add Customers</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-list-suppliers.html">
+                                    <a href="../backend/page-list-suppliers.php">
                                         <i class="las la-minus"></i><span>Suppliers</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-supplier.html">
+                                    <a href="../backend/page-add-supplier.php">
                                         <i class="las la-minus"></i><span>Add Suppliers</span>
                                     </a>
                                 </li>
@@ -309,10 +342,22 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
+                                    <a href="../app/user-profile.php">
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
+                                <?php if ($is_admin): ?>
+                                    <li class="">
+                                        <a href="../app/user-add.php">
+                                            <i class="las la-minus"></i><span>User Add</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="../app/user-list.php">
+                                            <i class="las la-minus"></i><span>User List</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
                             </ul>
                         </li>
                         <li class="">
@@ -345,7 +390,7 @@ if (isset($_SESSION['login_user'])) {
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
-                        <a href="../backend/index1.php" class="header-logo">
+                        <a href="../backend/dashboard.php" class="header-logo">
                             <img src="../assets/images/logo.png" class="img-fluid rounded-normal" alt="logo">
                             <h5 class="logo-title ml-3">ManageMatic</h5>
                         </a>
@@ -389,7 +434,7 @@ if (isset($_SESSION['login_user'])) {
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.html"
+                                                        <a href="../app/user-profile.php"
                                                             class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
@@ -441,7 +486,7 @@ if (isset($_SESSION['login_user'])) {
                                     </tr>
                                 </thead>
                                 <?php
-                                if (!empty($data)) {
+                                if (!empty ($data)) {
                                     echo '<tbody class="ligth-body">';
                                     foreach ($data as $row) {
                                         echo '<tr>';
@@ -484,6 +529,8 @@ if (isset($_SESSION['login_user'])) {
                                     echo 'No data found';
                                 }
                                 ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

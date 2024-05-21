@@ -44,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
          $mail->setFrom('ishanmahida123@gmail.com', 'Ishan Mahida');
          $mail->addAddress($email);
 
-         //Content
-         $mail->isHTML(true); // Set email format to HTML
+         $mail->isHTML(true);
          $mail->Subject = 'OTP for Password Reset';
          $mail->Body = 'Your OTP for password reset is: ' . $otp;
 

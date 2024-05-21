@@ -320,10 +320,22 @@ mysqli_close($conn);
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
+                                    <a href="../app/user-profile.php">
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
+                                <?php if ($is_admin): ?>
+                                    <li class="">
+                                        <a href="../app/user-add.php">
+                                            <i class="las la-minus"></i><span>User Add</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="../app/user-list.php">
+                                            <i class="las la-minus"></i><span>User List</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
                             </ul>
                         </li>
                         <li class="">
@@ -356,7 +368,7 @@ mysqli_close($conn);
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
-                        <a href="../backend/index.html" class="header-logo">
+                        <a href="../backend/dashboard.php" class="header-logo">
                             <img src="../assets/images/logo.png" class="img-fluid rounded-normal" alt="logo">
                             <h5 class="logo-title ml-3">ManageMatic</h5>
                         </a>
@@ -400,7 +412,7 @@ mysqli_close($conn);
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.html"
+                                                        <a href="../app/user-profile.php"
                                                             class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>

@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     $password = $_POST['pass'];
     $confirm_password = $_POST['cpass'];
 
-    // Check if both passwords match
     if ($password !== $confirm_password) {
         $error_message = "Passwords do not match. Please try again.";
     }
@@ -41,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Recover Password | ManageMatic | Store Management System</title>
+    <title>Reset Password | ManageMatic | Store Management System</title>
 
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
     <link rel="stylesheet" href="../assets/css/backend-plugin.min.css">

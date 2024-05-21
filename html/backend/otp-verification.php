@@ -8,10 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
         die("Connection failed:" . mysqli_connect_error());
     }
 
-    // Retrieve OTP from the form
     $entered_otp = $_POST['otp'];
 
-    // Check if the entered OTP exists in the database
     $check_query = "SELECT * FROM store WHERE OTP = ?";
     $check_stmt = $conn->prepare($check_query);
     $check_stmt->bind_param("s", $entered_otp);
@@ -69,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
                                                     <div class="col-lg-12">
                                                         <div class="floating-label form-group">
                                                             <input class="floating-input form-control" type="otp"
-                                                                name="otp" placeholder="">
+                                                                name="otp" placeholder="Enter OTP!">
                                                             <label>OTP</label>
                                                         </div>
                                                     </div>

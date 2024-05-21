@@ -1,66 +1,30 @@
 <?php
 session_start();
 
-if (isset ($_SESSION['login_user'])) {
+$name = '';
+$store_name = '';
+$email = '';
+$phone = '';
+$bdate = '';
+$staddress = '';
+
+if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
     if (!$conn) {
-        die ("Connection failed:" . mysqli_connect_error());
+        die("Connection failed: " . mysqli_connect_error());
     }
 
     $email = $_SESSION['login_user'];
-    $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
+    $fetch_query = "SELECT SNAME, STNAME, SEMAIL, SPHONE, SBDATE, SADDRESS FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
     $fetch_stmt->bind_param("s", $email);
     $fetch_stmt->execute();
     $fetch_stmt->store_result();
-    $fetch_stmt->bind_result($user_id);
-    $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM sale WHERE UID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $data = array();
-
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
-    }
-
-    mysqli_close($conn);
-
-} elseif (isset ($_SESSION['admin_user'])) {
-    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
-
-    if (!$conn) {
-        die ("Connection failed: " . mysqli_connect_error());
-    }
-
-    $is_admin = isset ($_SESSION['admin_user']);
-
-    $email = $_SESSION['admin_user'];
-    $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
-    $fetch_stmt = $conn->prepare($fetch_query);
-    $fetch_stmt->bind_param("s", $email);
-    $fetch_stmt->execute();
-    $fetch_stmt->store_result();
-    $fetch_stmt->fetch();
-
-    $sql = "SELECT * FROM sale";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $data = array();
-
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
+    if ($fetch_stmt->num_rows > 0) {
+        $fetch_stmt->bind_result($name, $store_name, $email, $phone, $bdate, $staddress);
+        $fetch_stmt->fetch();
     }
 
     mysqli_close($conn);
@@ -73,7 +37,7 @@ if (isset ($_SESSION['login_user'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>List Sale | ManageMatic | Store Management System</title>
+    <title>User Profile | ManageMatic | Store Management System</title>
 
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
     <link rel="stylesheet" href="../assets/css/backend-plugin.min.css">
@@ -81,7 +45,7 @@ if (isset ($_SESSION['login_user'])) {
     <link rel="stylesheet" href="../assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
     <link rel="stylesheet" href="../assets/vendor/remixicon/fonts/remixicon.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="  ">
@@ -346,18 +310,6 @@ if (isset ($_SESSION['login_user'])) {
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
-                                <?php if ($is_admin): ?>
-                                    <li class="">
-                                        <a href="../app/user-add.php">
-                                            <i class="las la-minus"></i><span>User Add</span>
-                                        </a>
-                                    </li>
-                                    <li class="">
-                                        <a href="../app/user-list.php">
-                                            <i class="las la-minus"></i><span>User List</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
                             </ul>
                         </li>
                         <li class="">
@@ -390,7 +342,7 @@ if (isset ($_SESSION['login_user'])) {
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
                     <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
                         <i class="ri-menu-line wrapper-menu"></i>
-                        <a href="../backend/dashboard.php" class="header-logo">
+                        <a href="../backend/index.html" class="header-logo">
                             <img src="../assets/images/logo.png" class="img-fluid rounded-normal" alt="logo">
                             <h5 class="logo-title ml-3">ManageMatic</h5>
                         </a>
@@ -436,7 +388,7 @@ if (isset ($_SESSION['login_user'])) {
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
                                                         <a href="../app/user-profile.php"
                                                             class="btn border mr-2">Profile</a>
-                                                        <a href="auth-sign-out.php" class="btn border">Sign Out</a>
+                                                        <a href="../backend/auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -453,83 +405,135 @@ if (isset ($_SESSION['login_user'])) {
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-                            <div>
-                                <h4 class="mb-3">Sale List</h4>
-                                <p class="mb-0">Sales enables you to effectively control sales KPIs and monitor them in
-                                    one central<br>
-                                    place while helping teams to reach sales goals. </p>
+                        <div class="card car-transparent">
+                            <div class="card-body p-0">
+                                <div class="profile-image position-relative">
+                                    <a href="#" id="uploadTrigger">
+                                        <img src="../assets/images/page-img/profile.png" class="img-fluid rounded w-100"
+                                            alt="profile-image">
+                                    </a>
+                                    <input type="file" name="image" id="profileImage" accept="image/*"
+                                        style="display: none;">
+                                </div>
                             </div>
-                            <a href="page-add-sale.php" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Add Sale</a>
                         </div>
                     </div>
-                    <div class="col-lg-12">
-                        <div class="table-responsive rounded mb-3">
-                            <table class="data-table table mb-0 tbl-server-info">
-                                <thead class="bg-white text-uppercase">
-                                    <tr class="ligth ligth-data">
-                                        <th>
-                                            <div class="checkbox d-inline-block">
-                                                <input type="checkbox" class="checkbox-input" id="checkbox1">
-                                                <label for="checkbox1" class="mb-0"></label>
+                </div>
+                <script>
+                    document.getElementById('uploadTrigger').onclick = function () {
+                        document.getElementById('profileImage').click();
+                    };
+                </script>
+                <div class="row m-sm-0 px-3">
+                    <div class="col-lg-4 card-profile">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="profile-img position-relative">
+                                        <div class="profile-img mb-3">
+                                            <a href="#" id="upload">
+                                                <img id="profile-image" src="../assets/images/user/1.png"
+                                                    class="img-fluid rounded" alt="profile-image">
+                                            </a>
+                                        </div>
+                                        <input type="file" name="profile" id="upload-photo" style="display: none;">
+                                    </div>
+                                </div>
+                                <script>
+                                    document.getElementById('upload').addEventListener('click', function () {
+                                        document.getElementById('upload-photo').click();
+                                    });
+                                </script>
+                                <center>
+                                    <div class="ml-3">
+                                        <h4 class="mb-1">
+                                            <?php echo $store_name; ?>
+                                        </h4>
+                                        <h5 class="mb-2">
+                                            <?php echo $name; ?>
+                                        </h5>
+                                    </div>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 card-profile">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <h4>Personal Information</h4>
+                                <br>
+                                <div class="profile-content tab-content">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="ml-3">
                                             </div>
-                                        </th>
-                                        <th>Date</th>
-                                        <th>Product</th>
-                                        <th>Customer</th>
-                                        <th>Total</th>
-                                        <th>Paid</th>
-                                        <th>Status</th>
-                                        <th>Biller</th>
-                                        <th>Tax</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <?php
-                                if (!empty ($data)) {
-                                    echo '<tbody class="ligth-body">';
-                                    foreach ($data as $row) {
-                                        echo '<tr>';
-                                        echo '<td>';
-                                        echo '<div class="checkbox d-inline-block">';
-                                        echo '<input type="checkbox" class="checkbox-input" id="checkbox2">';
-                                        echo '<label for="checkbox2" class="mb-0"></label>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['SLDATE'] . '</td>';
-                                        echo '<td>' . $row['SLPRODUCT'] . '</td>';
-                                        echo '<td>' . $row['SLCUSTOMER'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="badge badge-success">' . $row['SLPAYSTATUS'] . '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['SLBILLER'] . '</td>';
-                                        echo '<td>' . $row['SLTAX'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="d-flex align-items-center list-action">';
-                                        echo '<a class="badge badge-info mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="View" href="#"><i
-                                            class="ri-eye-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-success mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Edit" href="#"><i
-                                            class="ri-pencil-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-warning mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Delete"
-                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '</tr>';
-                                    }
-                                    echo '</tbody>';
-                                    echo '</table>';
-                                } else {
-                                    echo 'No data found';
-                                }
-                                ?>
-                                </tbody>
-                            </table>
+                                            <ul class="list-inline p-0 m-0">
+                                                <li class="mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <svg class="svg-icon mr-3" height="18" width="18"
+                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        </svg>
+                                                        <h5 class="mb-0">
+                                                            <?php echo $staddress ?>
+                                                        </h5>
+                                                    </div>
+                                                </li>
+                                                </li>
+                                                <li class="mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <svg class="svg-icon mr-3" height="18" width="18"
+                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+                                                        </svg>
+                                                        <h5 class="mb-0">
+                                                            <?php echo $bdate ?>
+                                                        </h5>
+                                                    </div>
+                                                </li>
+                                                <li class="mb-2">
+                                                    <div class="d-flex align-items-center">
+                                                        <svg class="svg-icon mr-3" height="18" width="18"
+                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                        </svg>
+                                                        <h5 class="mb-0">
+                                                            <?php echo $phone ?>
+                                                        </h5>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="d-flex align-items-center">
+                                                        <svg class="svg-icon mr-3" height="18" width="18"
+                                                            xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <h5 class="mb-0">
+                                                            <?php echo $email ?>
+                                                        </h5>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <a href="../app/update-profile.php"><button class="btn btn-primary"
+                                            id="updateProfileBtn">Update Profile</button></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

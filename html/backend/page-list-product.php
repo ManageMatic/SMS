@@ -8,6 +8,8 @@ if (isset($_SESSION['login_user'])) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
+    $redirect_url = "../backend/dashboard.php";
+
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -16,6 +18,16 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
+
+    /*$fetch_query1 = "SELECT STNAME FROM store WHERE SEMAIL=?";
+    $fetch_stmt = $conn->prepare($fetch_query1);
+    $fetch_stmt->execute();
+    $fetch_stmt->store_result();
+
+    if ($fetch_stmt->num_rows > 0) {
+        $fetch_stmt->bind_result($store_name);
+        $fetch_stmt->fetch();
+    }*/
 
     $sql = "SELECT * FROM product WHERE UID = ?";
     $stmt = $conn->prepare($sql);
@@ -29,13 +41,91 @@ if (isset($_SESSION['login_user'])) {
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
         }
-    } else {
-        echo "0 results";
+    }
+
+    mysqli_close($conn);
+
+} elseif (isset($_SESSION['admin_user'])) {
+    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
+
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    $is_admin = isset($_SESSION['admin_user']);
+    $redirect_url = "../backend/admin-dashboard.php";
+
+    $email = $_SESSION['admin_user'];
+    $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
+    $fetch_stmt = $conn->prepare($fetch_query);
+    $fetch_stmt->bind_param("s", $email);
+    $fetch_stmt->execute();
+    $fetch_stmt->store_result();
+    $fetch_stmt->fetch();
+
+    $sql = "SELECT * FROM product";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $data = array();
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
     }
 
     mysqli_close($conn);
 }
 ?>
+<?php
+$conn = mysqli_connect("localhost", "root", "", "storemanagement");
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST["save"])) {
+    // Get values from the form submission
+    $id = $_POST["id"];
+    $newPrice = $_POST["price"];
+    $newCost = $_POST["cost"];
+
+    // Update the database
+    $sql = "UPDATE product SET PPRICE = '$newPrice', PCOST = '$newCost' WHERE PID = $id";
+
+    if (mysqli_query($conn, $sql)) {
+        header("Location:page-list-product.php");
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+}
+?>
+
+<!-- Delete Code from the database -->
+<?php
+$conn = mysqli_connect("localhost", "root", "", "storemanagement");
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+if (isset($_POST["delete"])) {
+    // Get values from the form submission
+    $id = $_POST["id"];
+
+    // Update the database
+    $sql = "DELETE FROM `product` WHERE `product`.`PID` = $id";
+
+    if (mysqli_query($conn, $sql)) {
+        header("Location:page-list-product.php");
+    } else {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+}
+?>
+
 
 <!doctype html>
 <html lang="en">
@@ -63,7 +153,7 @@ if (isset($_SESSION['login_user'])) {
 
         <div class="iq-sidebar  sidebar-default ">
             <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
-                <a href="../backend/index1.php" class="header-logo">
+                <a href="../backend/index.html" class="header-logo">
                     <img src="../assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
                     <h5 class="logo-title light-logo ml-3">ManageMatic</h5>
                 </a>
@@ -75,7 +165,7 @@ if (isset($_SESSION['login_user'])) {
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="iq-menu">
                         <li class="active">
-                            <a href="../backend/index1.php" class="svg-icon">
+                            <a href="<?php echo $redirect_url; ?>" class="svg-icon">
                                 <svg class="svg-icon" id="p-dash1" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -312,10 +402,22 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
+                                    <a href="../app/user-profile.php">
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
+                                <?php if ($is_admin): ?>
+                                    <li class="">
+                                        <a href="../app/user-add.php">
+                                            <i class="las la-minus"></i><span>User Add</span>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="../app/user-list.php">
+                                            <i class="las la-minus"></i><span>User List</span>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
                             </ul>
                         </li>
                         <li class="">
@@ -392,7 +494,7 @@ if (isset($_SESSION['login_user'])) {
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.html"
+                                                        <a href="../app/user-profile.php"
                                                             class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
@@ -441,39 +543,53 @@ if (isset($_SESSION['login_user'])) {
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                <div class="popup text-left">
-                                                    <h4 class="mb-3" id="editProductModalLabel">Edit Product Price and
-                                                        Cost!</h4>
-                                                    <form method="post" action="edit-product.php">
-                                                        <div class="content create-workform bg-body">
-                                                            <div class="pb-3">
-                                                                <label class="mb-2">Price *</label>
-                                                                <input type="text" name="price" class="form-control"
-                                                                    placeholder="Enter Price" required>
-                                                            </div>
-                                                            <div class="pb-3">
-                                                                <label class="mb-2">Cost *</label>
-                                                                <input type="text" name="cost" class="form-control"
-                                                                    placeholder="Enter Cost" required>
-                                                            </div>
-                                                            <input type="hidden" name="product_id" id="editProductId">
-                                                            <div class="col-lg-12 mt-4 text-center">
-                                                                <button type="button" class="btn btn-primary mr-4"
-                                                                    data-dismiss="modal">Cancel</button>
-                                                                <button type="submit" class="btn btn-outline-primary"
-                                                                    name="save">Save</button>
-                                                            </div>
+                                <div id="confirmBox <?php $counter; ?> ">
+                                    <form method="post">
+                                        <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <div class="popup text-left">
+                                                            <h4 class="mb-3" id="editProductModalLabel">Edit Product
+                                                                Price
+                                                                and
+                                                                Cost!</h4>
+                                                            <form method="post" action="edit-product.php">
+                                                                <div class="content create-workform bg-body">
+                                                                    <div class="pb-3">
+                                                                        <label class="mb-2">Price *</label>
+                                                                        <input type="text" name="price"
+                                                                            class="form-control"
+                                                                            placeholder="Enter Price"
+                                                                            value="<?php $row['PPRICE']; ?>" required>
+                                                                    </div>
+                                                                    <div class="pb-3">
+                                                                        <label class="mb-2">Cost *</label>
+                                                                        <input type="text" name="cost"
+                                                                            class="form-control"
+                                                                            placeholder="Enter Cost"
+                                                                            value="<?php $row['PCOST']; ?>" required>
+                                                                    </div>
+                                                                    <input type="hidden" name="id"
+                                                                        value=" <?php $row['PID']; ?>">
+                                                                    <div class="col-lg-12 mt-4 text-center">
+                                                                        <button type="button"
+                                                                            class="btn btn-primary mr-4"
+                                                                            data-dismiss="modal"
+                                                                            onclick="closeConfirmBox(<?php $counter; ?>)">Cancel</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-outline-primary"
+                                                                            name="save">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
                                                         </div>
-                                                    </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
 
                                 <?php if (!empty($data)): ?>
@@ -503,11 +619,8 @@ if (isset($_SESSION['login_user'])) {
                                 <div class="d-flex align-items-center list-action">
                                     <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title=""
                                         data-original-title="View" href=""><i class="ri-eye-line mr-0"></i></a>
-                                    <a class="badge bg-success mr-2 edit-product-btn" href="#" data-toggle="modal"
-                                        data-target="#editProductModal" data-product-id="<?php echo $row['PID']; ?>"
-                                        data-product-price="<?php echo $row['PPRICE']; ?>"
-                                        data-product-cost="<?php echo $row['PCOST']; ?>" data-original-title="Edit">
-                                        <i class="ri-pencil-line mr-0"></i>
+                                    <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="Edit"
+                                        href="#" onclick="editpopup(<?php $counter; ?>)"><i class="ri-pencil-line mr-0"></i></a>
                                     </a>
                                     <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title=""
                                         data-original-title="Delete"
@@ -522,43 +635,27 @@ if (isset($_SESSION['login_user'])) {
                         </table>
                     <?php endif; ?>
                     <script>
-                        function openEditProductModal(productId) {
-                            $.ajax({
-                                url: 'get-product-details.php',
-                                type: 'POST',
-                                data: { productId: productId },
-                                success: function (response) {
-                                    var productDetails = JSON.parse(response);
-                                    $('#editProductId').val(productId);
-                                    $('[name="price"]').val(productDetails.PPRICE);
-                                    $('#editProductModal').modal('show');
-                                },
-                                error: function (xhr, status, error) {
-                                    console.error('Error fetching product details:', error);
-                                }
-                            });
+                        function editpopup(counter) {
+                            var popupId = "confirmBox" + counter;
+                            document.getElementById(popupId).style.display = "block";
                         }
 
-                        $('[data-toggle="modal"]').click(function () {
-                            var productId = $(this).data('product-id');
-                            openEditProductModal(productId);
-                        });
+                        function closeConfirmBox(counter) {
+                            var popupId = "confirmBox" + counter;
+                            var confirmationBox = document.getElementById(popupId);
+                            confirmationBox.style.display = "none";
+                        }
 
-                        $('#editProductForm').submit(function (event) {
-                            event.preventDefault();
+                        function view(counter) {
+                            var popupId = "Viewbox" + counter;
+                            document.getElementById(popupId).style.display = "block";
+                        }
 
-                            $.ajax({
-                                url: 'edit-product.php',
-                                type: 'POST',
-                                data: $(this).serialize(),
-                                success: function (response) {
-                                    window.location.href = 'edit-product.php';
-                                },
-                                error: function (xhr, status, error) {
-                                    console.error('Error updating product details:', error);
-                                }
-                            });
-                        });
+                        function cancelBox(counter) {
+                            var popupId = "Viewbox" + counter;
+                            var confirmationBox = document.getElementById(popupId);
+                            confirmationBox.style.display = "none";
+                        }
                     </script>
                     </tbody>
                     </table>

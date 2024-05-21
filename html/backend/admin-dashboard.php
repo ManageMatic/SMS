@@ -1,26 +1,25 @@
 <?php
 session_start();
 
-$store_name = '';
-$email = '';
+$admin_name = '';
+$admin_email = '';
 
-if (isset($_SESSION['login_user'])) {
+if (isset ($_SESSION['admin_user'])) {
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
     if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
+        die ("Connection failed: " . mysqli_connect_error());
     }
 
-    $email = $_SESSION['login_user'];
-    $fetch_query = "SELECT STNAME FROM store WHERE SEMAIL=?";
-    $fetch_query1 = "SELECT SEMAIL FROM store WHERE STNAME=?";
+    $email = $_SESSION['admin_user'];
+    $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
     $fetch_stmt->bind_param("s", $email);
     $fetch_stmt->execute();
     $fetch_stmt->store_result();
 
     if ($fetch_stmt->num_rows > 0) {
-        $fetch_stmt->bind_result($store_name);
+        $fetch_stmt->bind_result($admin_name, $admin_email);
         $fetch_stmt->fetch();
     }
 
@@ -37,28 +36,27 @@ if (isset($_SESSION['login_user'])) {
         echo "0 results";
     }
 
-    // Sales query
-    $sales_query = "SELECT SUM(SLTOTALPAY) FROM sale WHERE UID = ?";
+    $sales_query = "SELECT SUM(SLTOTALPAY) FROM sale";
     $sales_stmt = $conn->prepare($sales_query);
-    $sales_stmt->bind_param("i", $user_id);
+    //$sales_stmt->bind_param("i", $user_id);
     $sales_stmt->execute();
     $sales_result = $sales_stmt->get_result();
 
-    $cost_query = "SELECT SUM(PRPAYMENT) FROM purchase WHERE UID = ?";
+    $cost_query = "SELECT SUM(PRPAYMENT) FROM purchase";
     $cost_stmt = $conn->prepare($cost_query);
-    $cost_stmt->bind_param("i", $user_id);
+    //$cost_stmt->bind_param("i", $user_id);
     $cost_stmt->execute();
     $cost_result = $cost_stmt->get_result();
 
-    $product_query = "SELECT SUM(SLQUANTITY) FROM sale WHERE UID = ?";
+    $product_query = "SELECT SUM(SLQUANTITY) FROM sale";
     $product_stmt = $conn->prepare($product_query);
-    $product_stmt->bind_param("i", $user_id);
+    //$product_stmt->bind_param("i", $user_id);
     $product_stmt->execute();
     $product_result = $product_stmt->get_result();
 
-    $top_product_query = "SELECT SLPRODUCT FROM sale WHERE UID = ?";
+    $top_product_query = "SELECT SLPRODUCT FROM sale";
     $top_product_stmt = $conn->prepare($top_product_query);
-    $top_product_stmt->bind_param("i", $user_id);
+    //$top_product_stmt->bind_param("i", $user_id);
     $top_product_stmt->execute();
     $top_product_result = $top_product_stmt->get_result();
 
@@ -74,7 +72,7 @@ if (isset($_SESSION['login_user'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>
-        <?php echo $store_name; ?> | ManageMatic | Store Management System
+        <?php echo $admin_name; ?> | ManageMatic | Store Management System
     </title>
 
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
@@ -345,8 +343,18 @@ if (isset($_SESSION['login_user'])) {
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
+                                    <a href="#">
                                         <i class="las la-minus"></i><span>User Profile</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="../app/user-add.php">
+                                        <i class="las la-minus"></i><span>User Add</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="../app/user-list.html">
+                                        <i class="las la-minus"></i><span>User List</span>
                                     </a>
                                 </li>
                             </ul>
@@ -425,8 +433,7 @@ if (isset($_SESSION['login_user'])) {
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.html"
-                                                            class="btn border mr-2">Profile</a>
+                                                        <a href="#" class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
                                                 </div>
@@ -448,7 +455,7 @@ if (isset($_SESSION['login_user'])) {
                         <div class="card card-transparent card-block card-stretch card-height border-none">
                             <div class="card-body p-0 mt-lg-2 mt-0">
                                 <h3 class="mb-3">
-                                    <?php echo "Welcome, " . $store_name; ?>
+                                    <?php echo "Welcome, " . $admin_name; ?>
                                 </h3>
                                 <p class="mb-0 mr-4">Your dashboard gives you views of key performance or business
                                     process.</p>
@@ -527,7 +534,7 @@ if (isset($_SESSION['login_user'])) {
                                                 if ($product_result->num_rows > 0) {
                                                     while ($row = $product_result->fetch_assoc()) {
                                                         $product_sales = $row["SUM(SLQUANTITY)"];
-                                                        echo '<h4>' . $product_sales . '/-</h4>';
+                                                        echo '<h4>' . $product_sales . '</h4>';
                                                     }
                                                 } else {
                                                     echo "No sales found";
@@ -544,58 +551,38 @@ if (isset($_SESSION['login_user'])) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-8">
                         <div class="card card-block card-stretch card-height">
                             <div class="card-header d-flex justify-content-between">
-                                <div class="header-title">
-                                    <h4 class="card-title">Overview</h4>
+                                <div class="d-flex align-items-top justify-content-between">
+                                    <img id="storeImage" src="../path-to-default-image.jpg" class="img-fluid"
+                                        alt="Store Image">
                                 </div>
-                                <div class="card-header-toolbar d-flex align-items-center">
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton001"
-                                            data-toggle="dropdown">
-                                            This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                            aria-labelledby="dropdownMenuButton001">
-                                            <a class="dropdown-item" href="#">Year</a>
-                                            <a class="dropdown-item" href="#">Month</a>
-                                            <a class="dropdown-item" href="#">Week</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="layout1-chart1"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="card card-block card-stretch card-height">
-                            <div class="card-header d-flex align-items-center justify-content-between">
-                                <div class="header-title">
-                                    <h4 class="card-title">Revenue Vs Cost</h4>
-                                </div>
-                                <div class="card-header-toolbar d-flex align-items-center">
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton002"
-                                            data-toggle="dropdown">
-                                            This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                            aria-labelledby="dropdownMenuButton002">
-                                            <a class="dropdown-item" href="#">Yearly</a>
-                                            <a class="dropdown-item" href="#">Monthly</a>
-                                            <a class="dropdown-item" href="#">Weekly</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="layout1-chart-2" style="min-height: 360px;"></div>
-                            </div>
-                        </div>
-                    </div>
+
+                    <script>
+                        var imagePaths = [
+                            "https://img.freepik.com/free-vector/hand-drawn-international-trade-illustration_52683-76253.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1700524800&semt=ais",
+                            "https://img.freepik.com/premium-vector/inventory-control-system-concept-professional-manager-checking-goods-stock-supply-inventory-management-with-goods-demand_185038-803.jpg",
+                            "https://img.freepik.com/free-vector/warehouse-staff-wearing-uniform-loading-parcel-box-checking-product-from-warehouse-delivery-logistic-storage-truck-transportation-industry-delivery-logistic-business-delivery_1150-60909.jpg",
+                        ];
+
+                        var currentIndex = 0;
+
+                        function changeImage() {
+                            var imgElement = document.getElementById('storeImage');
+
+                            imgElement.src = imagePaths[currentIndex];
+
+                            currentIndex = (currentIndex + 1) % imagePaths.length;
+                        }
+
+                        changeImage();
+
+                        setInterval(changeImage, 5000);
+                    </script>
                     <div class="col-lg-8">
                         <div class="card card-block card-stretch card-height">
                             <div class="card-header d-flex align-items-center justify-content-between">
@@ -721,126 +708,41 @@ if (isset($_SESSION['login_user'])) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="card card-block card-stretch card-height-helf">
-                            <div class="card-body">
-                                <div class="d-flex align-items-top justify-content-between">
-                                    <div class="">
-                                        <p class="mb-0">Income</p>
-                                        <h5>98.78K/-</h5>
-                                    </div>
-                                    <div class="card-header-toolbar d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton003"
-                                                data-toggle="dropdown">
-                                                This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                            </span>
-                                            <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                                aria-labelledby="dropdownMenuButton003">
-                                                <a class="dropdown-item" href="#">Year</a>
-                                                <a class="dropdown-item" href="#">Month</a>
-                                                <a class="dropdown-item" href="#">Week</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="layout1-chart-3" class="layout-chart-1"></div>
-                            </div>
-                        </div>
-                        <div class="card card-block card-stretch card-height-helf">
-                            <div class="card-body">
-                                <div class="d-flex align-items-top justify-content-between">
-                                    <div class="">
-                                        <p class="mb-0">Expenses</p>
-                                        <h5>45,89K/-</h5>
-                                    </div>
-                                    <div class="card-header-toolbar d-flex align-items-center">
-                                        <div class="dropdown">
-                                            <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton004"
-                                                data-toggle="dropdown">
-                                                This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                            </span>
-                                            <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                                aria-labelledby="dropdownMenuButton004">
-                                                <a class="dropdown-item" href="#">Year</a>
-                                                <a class="dropdown-item" href="#">Month</a>
-                                                <a class="dropdown-item" href="#">Week</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="layout1-chart-4" class="layout-chart-2"></div>
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-lg-8">
                         <div class="card card-block card-stretch card-height">
                             <div class="card-header d-flex justify-content-between">
-                                <div class="header-title">
-                                    <h4 class="card-title">Order Summary</h4>
+                                <div class="d-flex align-items-top justify-content-between"
+                                    style="width: 100%; height: 100%;">
+                                    <img id="storeImage1" src="" class="img-fluid" alt="Store Image">
                                 </div>
-                                <div class="card-header-toolbar d-flex align-items-center">
-                                    <div class="dropdown">
-                                        <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton005"
-                                            data-toggle="dropdown">
-                                            This Month<i class="ri-arrow-down-s-line ml-1"></i>
-                                        </span>
-                                        <div class="dropdown-menu dropdown-menu-right shadow-none"
-                                            aria-labelledby="dropdownMenuButton005">
-                                            <a class="dropdown-item" href="#">Year</a>
-                                            <a class="dropdown-item" href="#">Month</a>
-                                            <a class="dropdown-item" href="#">Week</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex flex-wrap align-items-center mt-2">
-                                    <div class="d-flex align-items-center progress-order-left">
-                                        <div class="progress progress-round m-0 orange conversation-bar"
-                                            data-percent="46">
-                                            <span class="progress-left">
-                                                <span class="progress-bar"></span>
-                                            </span>
-                                            <span class="progress-right">
-                                                <span class="progress-bar"></span>
-                                            </span>
-                                            <div class="progress-value text-secondary">46%</div>
-                                        </div>
-                                        <div class="progress-value ml-3 pr-5 border-right">
-                                            <h5>12.65k/-</h5>
-                                            <p class="mb-0">Average Orders</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center ml-5 progress-order-right">
-                                        <div class="progress progress-round m-0 primary conversation-bar"
-                                            data-percent="46">
-                                            <span class="progress-left">
-                                                <span class="progress-bar"></span>
-                                            </span>
-                                            <span class="progress-right">
-                                                <span class="progress-bar"></span>
-                                            </span>
-                                            <div class="progress-value text-primary">46%</div>
-                                        </div>
-                                        <div class="progress-value ml-3">
-                                            <h5>59.84k/-</h5>
-                                            <p class="mb-0">Top Orders</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body pt-0">
-                                <div id="layout1-chart-5"></div>
                             </div>
                         </div>
                     </div>
+                    <script>
+                        var imagePaths1 = [
+                            "https://st.depositphotos.com/9999814/52407/i/450/depositphotos_524071248-stock-photo-smart-warehouse-management-system-with.jpg",
+                            "https://media.istockphoto.com/id/1484852942/photo/smart-warehouse-inventory-management-system-concept.jpg?s=612x612&w=0&k=20&c=q5hzpG2i4A7iVLT7sseXdKIsVxClkLJrUlLsZJNIGMs=",
+                            "https://st2.depositphotos.com/9999814/50628/i/450/depositphotos_506286024-stock-photo-smart-warehouse-management-system-with.jpg",
+                        ];
+
+                        var currentIndex1 = 0;
+
+                        function changeImage1() {
+                            var imgElement1 = document.getElementById('storeImage1');
+
+                            imgElement1.src = imagePaths1[currentIndex1];
+
+                            currentIndex1 = (currentIndex1 + 1) % imagePaths1.length;
+                        }
+
+                        changeImage1();
+
+                        setInterval(changeImage1, 5000);
+                    </script>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -864,19 +766,14 @@ if (isset($_SESSION['login_user'])) {
             </div>
         </div>
     </footer>
-    <!-- Backend Bundle JavaScript -->
     <script src="../assets/js/backend-bundle.min.js"></script>
 
-    <!-- Table Treeview JavaScript -->
     <script src="../assets/js/table-treeview.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script src="../assets/js/customizer.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script async src="../assets/js/chart-custom.js"></script>
 
-    <!-- app JavaScript -->
     <script src="../assets/js/app.js"></script>
 </body>
 

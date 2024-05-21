@@ -1,10 +1,88 @@
+<?php
+session_start();
+
+$store_name = '';
+$email = '';
+
+if (isset ($_SESSION['login_user'])) {
+    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
+
+    if (!$conn) {
+        die ("Connection failed: " . mysqli_connect_error());
+    }
+
+    $email = $_SESSION['login_user'];
+    $fetch_query = "SELECT STNAME FROM store WHERE SEMAIL=?";
+    $fetch_query1 = "SELECT SEMAIL FROM store WHERE STNAME=?";
+    $fetch_stmt = $conn->prepare($fetch_query);
+    $fetch_stmt->bind_param("s", $email);
+    $fetch_stmt->execute();
+    $fetch_stmt->store_result();
+
+    if ($fetch_stmt->num_rows > 0) {
+        $fetch_stmt->bind_result($store_name);
+        $fetch_stmt->fetch();
+    }
+
+    $sql = "SELECT * FROM product";
+    $result = mysqli_query($conn, $sql);
+
+    $data = array();
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+    } else {
+        echo "0 results";
+    }
+
+    $sales_query = "SELECT SUM(SLTOTALPAY) FROM sale WHERE UID = ?";
+    $sales_stmt = $conn->prepare($sales_query);
+    $sales_stmt->bind_param("i", $user_id);
+    $sales_stmt->execute();
+    $sales_result = $sales_stmt->get_result();
+
+    $cost_query = "SELECT SUM(PRPAYMENT) FROM purchase WHERE UID = ?";
+    $cost_stmt = $conn->prepare($cost_query);
+    $cost_stmt->bind_param("i", $user_id);
+    $cost_stmt->execute();
+    $cost_result = $cost_stmt->get_result();
+
+    $product_query = "SELECT SUM(SLQUANTITY) FROM sale WHERE UID = ?";
+    $product_stmt = $conn->prepare($product_query);
+    $product_stmt->bind_param("i", $user_id);
+    $product_stmt->execute();
+    $product_result = $product_stmt->get_result();
+
+    $top_product_query = "SELECT SLPRODUCT, SUM(SLQUANTITY) AS TotalQuantity FROM sale WHERE UID = ? GROUP BY SLPRODUCT ORDER BY TotalQuantity DESC LIMIT 1";
+    $top_product_stmt = $conn->prepare($top_product_query);
+    $top_product_stmt->bind_param("i", $user_id);
+    $top_product_stmt->execute();
+    $top_product_result = $top_product_stmt->get_result();
+
+    $most_sold_product = '';
+    $total_quantity_sold = 0;
+    if ($top_product_result->num_rows > 0) {
+        $top_product_row = $top_product_result->fetch_assoc();
+        $most_sold_product = $top_product_row['SLPRODUCT'];
+        $total_quantity_sold = $top_product_row['TotalQuantity'];
+    }
+
+    mysqli_close($conn);
+}
+?>
+
+
 <!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>User Profile | ManageMatic | Store Management System</title>
+    <title>
+        <?php echo $store_name; ?> | ManageMatic | Store Management System
+    </title>
 
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
     <link rel="stylesheet" href="../assets/css/backend-plugin.min.css">
@@ -12,16 +90,17 @@
     <link rel="stylesheet" href="../assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="../assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
     <link rel="stylesheet" href="../assets/vendor/remixicon/fonts/remixicon.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+
 </head>
 
 <body class="  ">
+
     <div id="loading">
         <div id="loading-center">
         </div>
     </div>
     <div class="wrapper">
-
         <div class="iq-sidebar  sidebar-default ">
             <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
                 <a href="../backend/index.html" class="header-logo">
@@ -273,7 +352,7 @@
                             </a>
                             <ul id="user" class="iq-submenu collapse" data-parent="#otherpage">
                                 <li class="">
-                                    <a href="../app/user-profile.html">
+                                    <a href="../app/user-profile.php">
                                         <i class="las la-minus"></i><span>User Profile</span>
                                     </a>
                                 </li>
@@ -353,7 +432,7 @@
                                                         <?php echo $email; ?>
                                                     </h5>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="../app/user-profile.html"
+                                                        <a href="../app/user-profile.php"
                                                             class="btn border mr-2">Profile</a>
                                                         <a href="auth-sign-out.php" class="btn border">Sign Out</a>
                                                     </div>
@@ -368,161 +447,334 @@
                 </nav>
             </div>
         </div>
+
         <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card car-transparent">
-                            <div class="card-body p-0">
-                                <div class="profile-image position-relative">
-                                    <a href="#" id="uploadTrigger">
-                                        <img src="../assets/images/page-img/profile.png" class="img-fluid rounded w-100"
-                                            alt="profile-image">
-                                    </a>
-                                    <input type="file" name="image" id="profileImage" accept="image/*"
-                                        style="display: none;">
-                                </div>
+                    <div class="col-lg-4">
+                        <div class="card card-transparent card-block card-stretch card-height border-none">
+                            <div class="card-body p-0 mt-lg-2 mt-0">
+                                <h3 class="mb-3">
+                                    <?php echo "Welcome, " . $store_name; ?>
+                                </h3>
+                                <p class="mb-0 mr-4">Your dashboard gives you views of key performance or business
+                                    process.</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                <script>
-                    document.getElementById('uploadTrigger').onclick = function () {
-                        document.getElementById('profileImage').click();
-                    };
-                </script>
-                <div class="row m-sm-0 px-3">
-                    <div class="col-lg-12 card-profile">
-                        <div class="card card-block card-stretch card-height">
-                            <div class="card-body">
-                                <h4>Personal Information</h4>
-                                <div class="profile-content tab-content">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4">
+                                <div class="card card-block card-stretch card-height">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-4 card-total-sale">
+                                            <div class="icon iq-icon-box-2 bg-info-light">
+                                                <img src="../assets/images/product/1.png" class="img-fluid" alt="image">
+                                            </div>
+                                            <div>
+                                                <p class="mb-2">Total Sales</p>
+                                                <?php
+                                                if ($sales_result->num_rows > 0) {
+                                                    while ($row = $sales_result->fetch_assoc()) {
+                                                        $total_sales = $row["SUM(SLTOTALPAY)"];
+                                                        echo '<h4>' . $total_sales . '/-</h4>';
+                                                    }
+                                                } else {
+                                                    echo "No sales found";
+                                                }
+                                                ?>
 
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="profile-img position-relative">
-                                                <div class="profile-img mb-3">
-                                                    <a href="#" id="upload">
-                                                        <img id="profile-image" src="../assets/images/user/1.png"
-                                                            class="img-fluid rounded" alt="profile-image">
-                                                    </a>
-                                                </div>
-                                                <input type="file" name="profile" id="upload-photo"
-                                                    style="display: none;">
                                             </div>
                                         </div>
-                                        <script>
-                                            document.getElementById('upload').addEventListener('click', function () {
-                                                document.getElementById('upload-photo').click();
-                                            });
-                                        </script>
-
-                                        <div class="ml-3">
-                                            <h4 class="mb-1">Ruben Dokidis</h4>
-                                            <p class="mb-2">UI/UX Designer</p>
+                                        <div class="iq-progress-bar mt-2">
+                                            <span class="bg-info iq-progress progress-1" data-percent="85">
+                                            </span>
                                         </div>
-                                        <div class="ml-3">
-                                        </div>
-
-                                        <ul class="list-inline p-0 m-0">
-                                            <li class="mb-2">
-                                                <div class="d-flex align-items-center">
-                                                    <svg class="svg-icon mr-3" height="16" width="16"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                    </svg>
-                                                    <p class="mb-0">Calefornia, U.S.A</p>
-                                                </div>
-                                            </li>
-                                            <li class="mb-2">
-                                                <div class="d-flex align-items-center">
-                                                    <svg class="svg-icon mr-3" height="16" width="16"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
-                                                    </svg>
-                                                    <p class="mb-0">March 25</p>
-                                                </div>
-                                            </li>
-                                            <li class="mb-2">
-                                                <div class="d-flex align-items-center">
-                                                    <svg class="svg-icon mr-3" height="16" width="16"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                                    </svg>
-                                                    <p class="mb-0">+91 01234 56789</p>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="d-flex align-items-center">
-                                                    <svg class="svg-icon mr-3" height="16" width="16"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                        viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <p class="mb-0">JoanDuo@property.com</p>
-                                                </div>
-                                            </li>
-                                        </ul>
                                     </div>
-                                    <div id="profile5" class="tab-pane fade">
-                                        <p></p>
-                                        <p></p>
-                                        <p class="mb-0"></p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4">
+                                <div class="card card-block card-stretch card-height">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-4 card-total-sale">
+                                            <div class="icon iq-icon-box-2 bg-danger-light">
+                                                <img src="../assets/images/product/2.png" class="img-fluid" alt="image">
+                                            </div>
+                                            <div>
+                                                <p class="mb-2">Total Cost</p>
+                                                <?php
+                                                if ($cost_result->num_rows > 0) {
+                                                    while ($row = $cost_result->fetch_assoc()) {
+                                                        $total_cost = $row["SUM(PRPAYMENT)"];
+                                                        echo '<h4>' . $total_cost . '/-</h4>';
+                                                    }
+                                                } else {
+                                                    echo "No sales found";
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                        <div class="iq-progress-bar mt-2">
+                                            <span class="bg-danger iq-progress progress-1" data-percent="70">
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4">
+                                <div class="card card-block card-stretch card-height">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-4 card-total-sale">
+                                            <div class="icon iq-icon-box-2 bg-success-light">
+                                                <img src="../assets/images/product/3.png" class="img-fluid" alt="image">
+                                            </div>
+                                            <div>
+                                                <p class="mb-2">Product Sold</p>
+                                                <?php
+                                                if ($product_result->num_rows > 0) {
+                                                    while ($row = $product_result->fetch_assoc()) {
+                                                        $product_sales = $row["SUM(SLQUANTITY)"];
+                                                        echo '<h4>' . $product_sales . '/-</h4>';
+                                                    }
+                                                } else {
+                                                    echo "No sales found";
+                                                }
+                                                ?>
+                                            </div>
+                                        </div>
+                                        <div class="iq-progress-bar mt-2">
+                                            <span class="bg-success iq-progress progress-1" data-percent="75">
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-8">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="d-flex align-items-top justify-content-between">
+                                    <img id="storeImage" src="../path-to-default-image.jpg" class="img-fluid"
+                                        alt="Store Image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        var imagePaths = [
+                            "https://img.freepik.com/free-vector/hand-drawn-international-trade-illustration_52683-76253.jpg?size=626&ext=jpg&ga=GA1.1.1880011253.1700524800&semt=ais",
+                            "https://img.freepik.com/premium-vector/inventory-control-system-concept-professional-manager-checking-goods-stock-supply-inventory-management-with-goods-demand_185038-803.jpg",
+                            "https://img.freepik.com/free-vector/warehouse-staff-wearing-uniform-loading-parcel-box-checking-product-from-warehouse-delivery-logistic-storage-truck-transportation-industry-delivery-logistic-business-delivery_1150-60909.jpg",
+                        ];
+
+                        var currentIndex = 0;
+
+                        function changeImage() {
+                            var imgElement = document.getElementById('storeImage');
+
+                            imgElement.src = imagePaths[currentIndex];
+
+                            currentIndex = (currentIndex + 1) % imagePaths.length;
+                        }
+
+                        changeImage();
+
+                        setInterval(changeImage, 5000);
+                    </script>
+                    <div class="col-lg-8">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <div class="header-title">
+                                    <h4 class="card-title">Top Products</h4>
+                                </div>
+                                <div class="card-header-toolbar d-flex align-items-center">
+                                    <div class="dropdown">
+                                        <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton006"
+                                            data-toggle="dropdown">
+                                            This Month<i class="ri-arrow-down-s-line ml-1"></i>
+                                        </span>
+                                        <div class="dropdown-menu dropdown-menu-right shadow-none"
+                                            aria-labelledby="dropdownMenuButton006">
+                                            <a class="dropdown-item" href="#">Year</a>
+                                            <a class="dropdown-item" href="#">Month</a>
+                                            <a class="dropdown-item" href="#">Week</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled row top-product mb-0">
+                                    <li class="col-lg-3">
+                                        <div class="card card-block card-stretch card-height mb-0">
+                                            <div class="card-body">
+                                                <div class="bg-warning-light rounded">
+                                                    <img src="../assets/images/product/01.png"
+                                                        class="style-img img-fluid m-auto p-3" alt="image">
+                                                </div>
+                                                <div class="style-text text-left mt-3">
+                                                    <h5 class="mb-1">Organic Cream</h5>
+                                                    <p class="mb-0">789 Item</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="col-lg-3">
+                                        <div class="card card-block card-stretch card-height mb-0">
+                                            <div class="card-body">
+                                                <div class="bg-danger-light rounded">
+                                                    <img src="../assets/images/product/02.png"
+                                                        class="style-img img-fluid m-auto p-3" alt="image">
+                                                </div>
+                                                <div class="style-text text-left mt-3">
+                                                    <h5 class="mb-1">Rain Umbrella</h5>
+                                                    <p class="mb-0">657 Item</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="col-lg-3">
+                                        <div class="card card-block card-stretch card-height mb-0">
+                                            <div class="card-body">
+                                                <div class="bg-info-light rounded">
+                                                    <img src="../assets/images/product/03.png"
+                                                        class="style-img img-fluid m-auto p-3" alt="image">
+                                                </div>
+                                                <div class="style-text text-left mt-3">
+                                                    <h5 class="mb-1">Serum Bottle</h5>
+                                                    <p class="mb-0">489 Item</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="col-lg-3">
+                                        <div class="card card-block card-stretch card-height mb-0">
+                                            <div class="card-body">
+                                                <div class="bg-success-light rounded">
+                                                    <img src="../assets/images/product/02.png"
+                                                        class="style-img img-fluid m-auto p-3" alt="image">
+                                                </div>
+                                                <div class="style-text text-left mt-3">
+                                                    <h5 class="mb-1">Organic Cream</h5>
+                                                    <p class="mb-0">468 Item</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card card-transparent card-block card-stretch mb-4">
+                            <div class="card-header d-flex align-items-center justify-content-between p-0">
+                                <div class="header-title">
+                                    <h4 class="card-title mb-0">Best Item All Time</h4>
+                                </div>
+                                <div class="card-header-toolbar d-flex align-items-center">
+                                    <div><a href="#" class="btn btn-primary view-btn font-size-14">View All</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-block card-stretch card-height-helf">
+                            <div class="card-body card-item-right">
+                                <div class="d-flex align-items-top">
+                                    <div class="bg-warning-light rounded">
+                                        <img src="../assets/images/product/04.png" class="style-img img-fluid m-auto"
+                                            alt="image">
+                                    </div>
+                                    <div class="style-text text-left">
+                                        <h5 class="mb-2">Coffee Beans Packet</h5>
+                                        <p class="mb-2">Total Sell : 45897</p>
+                                        <p class="mb-0">Total Earned : $45,89 M</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card card-block card-stretch card-height-helf">
+                            <div class="card-body card-item-right">
+                                <div class="d-flex align-items-top">
+                                    <div class="bg-danger-light rounded">
+                                        <img src="../assets/images/product/05.png" class="style-img img-fluid m-auto"
+                                            alt="image">
+                                    </div>
+                                    <div class="style-text text-left">
+                                        <h5 class="mb-2">Bottle Cup Set</h5>
+                                        <p class="mb-2">Total Sell : 44359</p>
+                                        <p class="mb-0">Total Earned : $45,50 M</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-header d-flex justify-content-between">
+                                <div class="d-flex align-items-top justify-content-between"
+                                    style="width: 100%; height: 100%;">
+                                    <img id="storeImage1" src="" class="img-fluid" alt="Store Image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        var imagePaths1 = [
+                            "https://st.depositphotos.com/9999814/52407/i/450/depositphotos_524071248-stock-photo-smart-warehouse-management-system-with.jpg",
+                            "https://media.istockphoto.com/id/1484852942/photo/smart-warehouse-inventory-management-system-concept.jpg?s=612x612&w=0&k=20&c=q5hzpG2i4A7iVLT7sseXdKIsVxClkLJrUlLsZJNIGMs=",
+                            "https://st2.depositphotos.com/9999814/50628/i/450/depositphotos_506286024-stock-photo-smart-warehouse-management-system-with.jpg",
+                        ];
+
+                        var currentIndex1 = 0;
+
+                        function changeImage1() {
+                            var imgElement1 = document.getElementById('storeImage1');
+
+                            imgElement1.src = imagePaths1[currentIndex1];
+
+                            currentIndex1 = (currentIndex1 + 1) % imagePaths1.length;
+                        }
+
+                        changeImage1();
+
+                        setInterval(changeImage1, 5000);
+                    </script>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Wrapper End-->
-    <footer class="iq-footer">
-        <div class="container-fluid">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
-                                </li>
-                                <li class="list-inline-item"><a href="#">Terms of Use</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-lg-6 text-right">
-                            <span class="mr-1">
-                                <script>document.write(new Date().getFullYear())</script>©
-                            </span> <a href="#" class="">ManageMatic</a>.
+        <footer class="iq-footer">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item"><a href="#">Privacy Policy</a>
+                                    </li>
+                                    <li class="list-inline-item"><a href="#">Terms of Use</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6 text-right">
+                                <span class="mr-1">
+                                    <script>document.write(new Date().getFullYear())</script>©
+                                </span> <a href="#" class="">ManageMatic</a>.
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </footer>
-    <script src="../assets/js/backend-bundle.min.js"></script>
+        </footer>
+        <script src="../assets/js/backend-bundle.min.js"></script>
 
-    <script src="../assets/js/table-treeview.js"></script>
+        <script src="../assets/js/table-treeview.js"></script>
 
-    <script src="../assets/js/customizer.js"></script>
+        <script src="../assets/js/customizer.js"></script>
 
-    <script async src="../assets/js/chart-custom.js"></script>
+        <script async src="../assets/js/chart-custom.js"></script>
 
-    <script src="../assets/js/app.js"></script>
+        <script src="../assets/js/app.js"></script>
 </body>
 
 </html>
