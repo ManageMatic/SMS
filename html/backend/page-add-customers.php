@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed:" . mysqli_connect_error());
     }
 
-    // Fetch user ID (UID) based on the logged-in user's email from the 'store' table
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -20,7 +16,6 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
 
-    // Fetch the UID value
     $fetch_stmt->fetch();
 
     if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['add'])) {
@@ -40,6 +35,7 @@ if (isset($_SESSION['login_user'])) {
             header("Location: page-list-customers.php");
             exit();
         } else {
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
     }
@@ -496,9 +492,9 @@ mysqli_close($conn);
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>

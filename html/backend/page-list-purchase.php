@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed:" . mysqli_connect_error());
     }
 
-    // Fetch user ID based on the logged-in user's email
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -24,10 +20,8 @@ if (isset($_SESSION['login_user'])) {
     $sql = "SELECT * FROM purchase";
     $result = mysqli_query($conn, $sql);
 
-    // Initialize an empty array to store the fetched data
     $data = array();
 
-    // Check if there are any rows returned
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
@@ -493,11 +487,9 @@ if (isset($_SESSION['login_user'])) {
                         </div>
                     </div>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -505,9 +497,9 @@ if (isset($_SESSION['login_user'])) {
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>

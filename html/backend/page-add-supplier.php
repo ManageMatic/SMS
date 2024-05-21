@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Fetch user ID (UID) based on the logged-in user's email from the 'store' table
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -20,13 +16,10 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
     
-    // Fetch the UID value
     $fetch_stmt->fetch();
 
-    // Handle form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
 
-        // Retrieve form data
         $spcompname = $_POST['spcomname'];
         $spname = $_POST['spname'];
         $spemail = $_POST['spemail'];
@@ -37,22 +30,19 @@ if (isset($_SESSION['login_user'])) {
         $spstate = $_POST['spstate'];
         $spcountry = $_POST['spcountry'];
 
-        // Insert data into the database
         $insert_query = "INSERT INTO supplier (UID, SPCOMPNAME, SPNAME, SPEMAIL, SPNUMBER, SPGST, SPADD, SPCITY, SPSTATE, SPCOUNTRY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_query);
         $insert_stmt->bind_param("isssssssss", $user_id, $spcompname, $spname, $spemail, $spnumber, $spgst, $spaddress, $spcity, $spstate, $spcountry);
 
         if ($insert_stmt->execute()) {
-            // Data inserted successfully
-            header("Location: page-list-suppliers.php"); // Redirect to the desired page
+            header("Location: page-list-suppliers.php");
             exit();
         } else {
-            // Error inserting data
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
     }
 } else {
-    // Redirect to the login page or handle unauthenticated user
     header("Location: auth-sign-in.php");
     exit();
 }
@@ -531,9 +521,9 @@ mysqli_close($conn);
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>

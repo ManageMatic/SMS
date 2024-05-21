@@ -58,16 +58,15 @@ if (isset($_SESSION['login_user'])) {
             }
         }
 
-        // Insert data into the database
         $insert_query = "INSERT INTO product (UID, PNAME, PCODE, PCATEGORY, PCOST, PPRICE, PQUANTITY, PDESC, PIMAGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_query);
         $insert_stmt->bind_param("issssssss", $user_id, $name, $code, $category, $cost, $price, $quantity, $description, $image_path);
 
         if ($insert_stmt->execute()) {
-            // Data inserted successfully
             header("Location: page-list-product.php");
             exit();
         } else {
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
     }
@@ -90,7 +89,6 @@ mysqli_close($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Add Product | ManageMatic | Store Management System</title>
 
-    <!-- Favicon -->
     <link rel="shortcut icon" href="../assets/images/favicon.ico" />
     <link rel="stylesheet" href="../assets/css/backend-plugin.min.css">
     <link rel="stylesheet" href="../assets/css/backend.css?v=1.0.0">
@@ -542,11 +540,9 @@ mysqli_close($conn);
                         </div>
                     </div>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -554,9 +550,9 @@ mysqli_close($conn);
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>
@@ -570,19 +566,14 @@ mysqli_close($conn);
             </div>
         </div>
     </footer>
-    <!-- Backend Bundle JavaScript -->
     <script src="../assets/js/backend-bundle.min.js"></script>
 
-    <!-- Table Treeview JavaScript -->
     <script src="../assets/js/table-treeview.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script src="../assets/js/customizer.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script async src="../assets/js/chart-custom.js"></script>
 
-    <!-- app JavaScript -->
     <script src="../assets/js/app.js"></script>
 </body>
 

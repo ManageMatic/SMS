@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed:" . mysqli_connect_error());
     }
 
-    // Fetch user ID (UID) based on the logged-in user's email from the 'store' table
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -20,7 +16,6 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
 
-    // Fetch the UID value
     $fetch_stmt->fetch();
 
     $fetch_query1 = "SELECT * FROM supplier WHERE UID = ?";
@@ -45,7 +40,6 @@ if (isset($_SESSION['login_user'])) {
         $insert_stmt->bind_param('issssssss', $user_id, $date, $purchase_product, $supplier, $receive, $tax, $quantity, $paystatus, $payment);
 
         if ($insert_stmt->execute()) {
-            // Update product quantity in the database based on product name
             $update_query = "UPDATE product SET PQUANTITY = PQUANTITY + ? WHERE PNAME = ?";
             $update_stmt = $conn->prepare($update_query);
             $update_stmt->bind_param("is", $quantity, $purchase_product);
@@ -59,13 +53,13 @@ if (isset($_SESSION['login_user'])) {
                 }
                 echo "Product quantity updated.";
             } else {
+                header("Location: pages-error.html");
                 echo "Error: " . $update_stmt->error;
             }
-            // Data inserted successfully
-            header("Location: page-list-purchase.php"); // Redirect to the desired page
+            header("Location: page-list-purchase.php");
             exit();
         } else {
-            // Error inserting data
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
 
@@ -566,11 +560,9 @@ mysqli_close($conn);
                         </div>
                     </div>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -578,9 +570,9 @@ mysqli_close($conn);
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>

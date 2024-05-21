@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Fetch user ID based on the logged-in user's email
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -21,17 +17,14 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
 
-    // Fetch product data associated with the logged-in user
     $sql = "SELECT * FROM product WHERE UID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Initialize an empty array to store the fetched data
     $data = array();
 
-    // Check if there are any rows returned
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
@@ -448,54 +441,136 @@ if (isset($_SESSION['login_user'])) {
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <?php
-                                if (!empty($data)) {
-                                    echo '<tbody class="ligth-body">';
-                                    foreach ($data as $row) {
-                                        echo '<tr>';
-                                        echo '<td>';
-                                        echo '<div class="checkbox d-inline-block">';
-                                        echo '<input type="checkbox" class="checkbox-input" id="checkbox2">';
-                                        echo '<label for="checkbox2" class="mb-0"></label>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '<td>';
-                                        echo '<div class="d-flex align-items-center">';
-                                        echo '<img src="' . $row['PIMAGE'] . '" class="img-fluid rounded avatar-50 mr-3" alt="image">';
-                                        echo '<div>';
-                                        echo $row['PNAME'];
-                                        echo '<p class="mb-0"><small>' . $row['PDESC'] . '</small></p>';
-                                        echo '</div>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['PCODE'] . '</td>';
-                                        echo '<td>' . $row['PCATEGORY'] . '</td>';
-                                        echo '<td>' . $row['PPRICE'] . '</td>';
-                                        echo '<td>' . $row['PCOST'] . '</td>';
-                                        echo '<td>' . $row['PQUANTITY'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="d-flex align-items-center list-action">';
-                                        echo '<a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#"><i class="ri-pencil-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" href="#"><i class="ri-delete-bin-line mr-0"></i></a>';
-                                        echo '</div>';
-                                        echo '</td>';
-                                        echo '</tr>';
-                                    }
-                                    echo '</tbody>';
+                                <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="popup text-left">
+                                                    <h4 class="mb-3" id="editProductModalLabel">Edit Product Price and
+                                                        Cost!</h4>
+                                                    <form method="post" action="edit-product.php">
+                                                        <div class="content create-workform bg-body">
+                                                            <div class="pb-3">
+                                                                <label class="mb-2">Price *</label>
+                                                                <input type="text" name="price" class="form-control"
+                                                                    placeholder="Enter Price" required>
+                                                            </div>
+                                                            <div class="pb-3">
+                                                                <label class="mb-2">Cost *</label>
+                                                                <input type="text" name="cost" class="form-control"
+                                                                    placeholder="Enter Cost" required>
+                                                            </div>
+                                                            <input type="hidden" name="product_id" id="editProductId">
+                                                            <div class="col-lg-12 mt-4 text-center">
+                                                                <button type="button" class="btn btn-primary mr-4"
+                                                                    data-dismiss="modal">Cancel</button>
+                                                                <button type="submit" class="btn btn-outline-primary"
+                                                                    name="save">Save</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    echo '</table>';
+                                <?php if (!empty($data)): ?>
+                                    <tbody class="ligth-body">
+                                        <?php foreach ($data as $row): ?>
+                                            <tr>
+                                                <td>
+                                                    <div class="checkbox d-inline-block">
+                                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                                        <label for="checkbox2" class="mb-0"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <!--<div class="d-flex align-items-center">
+                                        <img src="' . $row['PIMAGE'] . '" class="img-fluid rounded avatar-50 mr-3" alt="image">
+                                        <div>-->
+                                                    <?php echo $row['PNAME']; ?>
+                                </div>
+                            </div>
+                            </td>
+                            <?php echo '<td>' . $row['PCODE'] . '</td>';
+                            echo '<td>' . $row['PCATEGORY'] . '</td>';
+                            echo '<td>' . $row['PPRICE'] . '</td>';
+                            echo '<td>' . $row['PCOST'] . '</td>';
+                            echo '<td>' . $row['PQUANTITY'] . '</td>'; ?>
+                            <td>
+                                <div class="d-flex align-items-center list-action">
+                                    <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title=""
+                                        data-original-title="View" href=""><i class="ri-eye-line mr-0"></i></a>
+                                    <a class="badge bg-success mr-2 edit-product-btn" href="#" data-toggle="modal"
+                                        data-target="#editProductModal" data-product-id="<?php echo $row['PID']; ?>"
+                                        data-product-price="<?php echo $row['PPRICE']; ?>"
+                                        data-product-cost="<?php echo $row['PCOST']; ?>" data-original-title="Edit">
+                                        <i class="ri-pencil-line mr-0"></i>
+                                    </a>
+                                    <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title=""
+                                        data-original-title="Delete"
+                                        href="delete-product.php?product_id=<?php echo $product_id; ?>"><i
+                                            class="ri-delete-bin-line mr-0"></i></a>
+                                </div>
+                            </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+
+                        </table>
+                    <?php endif; ?>
+                    <script>
+                        function openEditProductModal(productId) {
+                            $.ajax({
+                                url: 'get-product-details.php',
+                                type: 'POST',
+                                data: { productId: productId },
+                                success: function (response) {
+                                    var productDetails = JSON.parse(response);
+                                    $('#editProductId').val(productId);
+                                    $('[name="price"]').val(productDetails.PPRICE);
+                                    $('#editProductModal').modal('show');
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error fetching product details:', error);
                                 }
-                                ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                            });
+                        }
+
+                        $('[data-toggle="modal"]').click(function () {
+                            var productId = $(this).data('product-id');
+                            openEditProductModal(productId);
+                        });
+
+                        $('#editProductForm').submit(function (event) {
+                            event.preventDefault();
+
+                            $.ajax({
+                                url: 'edit-product.php',
+                                type: 'POST',
+                                data: $(this).serialize(),
+                                success: function (response) {
+                                    window.location.href = 'edit-product.php';
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error updating product details:', error);
+                                }
+                            });
+                        });
+                    </script>
+                    </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
+    </div>
+    </div>
+    </div>
+    </div>
+
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -503,9 +578,11 @@ if (isset($_SESSION['login_user'])) {
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy
+                                        Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of
+                                        Use</a>
                                 </li>
                             </ul>
                         </div>

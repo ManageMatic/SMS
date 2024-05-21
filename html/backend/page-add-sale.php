@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Fetch user ID (UID) based on the logged-in user's email from the 'store' table
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -20,10 +16,8 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
 
-    // Fetch the UID value
     $fetch_stmt->fetch();
 
-    // Fetch product names associated with the logged-in user using store ID
     $product_query = "SELECT PNAME FROM product WHERE UID = ?";
     $product_stmt = $conn->prepare($product_query);
     $product_stmt->bind_param("i", $user_id);
@@ -32,7 +26,6 @@ if (isset($_SESSION['login_user'])) {
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
 
-        // retrive data from form with post method
         $date = $_POST['sdate'];
         $biller = $_POST['sbiller'];
         $product_name = $_POST['sproduct'];
@@ -50,20 +43,18 @@ if (isset($_SESSION['login_user'])) {
             $target_file = $target_dir . basename($_FILES["pic"]["name"]);
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-            // Check if the file is an image
             $check = getimagesize($_FILES["pic"]["tmp_name"]);
             if ($check !== false) {
                 move_uploaded_file($_FILES["pic"]["tmp_name"], $target_file);
                 $image_path = $target_file;
             }
         }
-        // Insert data into the database
+
         $insert_query = "INSERT INTO sale (UID, SLDATE, SLBILLER, SLPRODUCT, SLCUSTOMER, SLTAX, SLQUANTITY, SLSTATUS, SLTOTALPAY, SLPAYSTATUS, SLIMAGE) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_query);
         $insert_stmt->bind_param("issssssssss", $user_id, $date, $biller, $product_name, $customer, $tax, $quantity, $status, $totalpay, $paystatus, $image_path);
 
         if ($insert_stmt->execute()) {
-            // Update product quantity in the database based on product name
             $update_query = "UPDATE product SET PQUANTITY = PQUANTITY - ? WHERE PNAME = ?";
             $update_stmt = $conn->prepare($update_query);
             $update_stmt->bind_param("is", $quantity, $product_name);
@@ -71,11 +62,13 @@ if (isset($_SESSION['login_user'])) {
             if ($update_stmt->execute()) {
                 echo "Product quantity updated.";
             } else {
+                header("Location: pages-error.html");
                 echo "Error: " . $update_stmt->error;
             }
             header("Location: page-list-sale.php");
             exit();
         } else {
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
 
@@ -585,11 +578,9 @@ if (isset($_SESSION['login_user'])) {
                         </div>
                     </div>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -597,9 +588,9 @@ if (isset($_SESSION['login_user'])) {
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>

@@ -1,17 +1,13 @@
 <?php
 session_start();
 
-// Check if the user is logged in
 if (isset($_SESSION['login_user'])) {
-    // Establish database connection
     $conn = mysqli_connect("localhost", "root", "", "storemanagement");
 
-    // Check connection
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    // Fetch user ID (UID) based on the logged-in user's email from the 'store' table
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
     $fetch_stmt = $conn->prepare($fetch_query);
@@ -20,7 +16,6 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
     
-    // Fetch the UID value
     $fetch_stmt->fetch();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add'])) {
@@ -32,7 +27,6 @@ if (isset($_SESSION['login_user'])) {
             $target_file = $target_dir . basename($_FILES["pic"]["name"]);
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-            // Check if the file is an image
             $check = getimagesize($_FILES["pic"]["tmp_name"]);
             if ($check !== false) {
                 move_uploaded_file($_FILES["pic"]["tmp_name"], $target_file);
@@ -40,22 +34,19 @@ if (isset($_SESSION['login_user'])) {
             }
         }
         
-        // retrive data from form with post method
         $product_name = $_POST['cpname'];
         $category = $_POST['cname'];
         $code = $_POST['ccode'];
 
-        // Insert data into the database
         $insert_query = "INSERT INTO category (UID, CIMAGE, CPNAME, CNAME, CCODE) VALUES (?, ?, ?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_query);
         $insert_stmt->bind_param("issss", $user_id, $image_path, $product_name, $category, $code);
 
         if ($insert_stmt->execute()) {
-            // Data inserted successfully
-            header("Location: page-list-category.php"); // Redirect to the desired page
+            header("Location: page-list-category.php");
             exit();
         } else {
-            // Error inserting data
+            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
     }
@@ -485,11 +476,9 @@ if (isset($_SESSION['login_user'])) {
                         </div>
                     </div>
                 </div>
-                <!-- Page end  -->
             </div>
         </div>
     </div>
-    <!-- Wrapper End-->
     <footer class="iq-footer">
         <div class="container-fluid">
             <div class="card">
@@ -497,9 +486,9 @@ if (isset($_SESSION['login_user'])) {
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                                <li class="list-inline-item"><a href="#">Privacy Policy</a>
                                 </li>
-                                <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                                <li class="list-inline-item"><a href="#">Terms of Use</a>
                                 </li>
                             </ul>
                         </div>
@@ -513,19 +502,14 @@ if (isset($_SESSION['login_user'])) {
             </div>
         </div>
     </footer>
-    <!-- Backend Bundle JavaScript -->
     <script src="../assets/js/backend-bundle.min.js"></script>
 
-    <!-- Table Treeview JavaScript -->
     <script src="../assets/js/table-treeview.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script src="../assets/js/customizer.js"></script>
 
-    <!-- Chart Custom JavaScript -->
     <script async src="../assets/js/chart-custom.js"></script>
 
-    <!-- app JavaScript -->
     <script src="../assets/js/app.js"></script>
 </body>
 
