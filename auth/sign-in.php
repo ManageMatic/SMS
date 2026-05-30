@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 $login_error = '';
 
@@ -26,7 +27,7 @@ if (isset($_POST['signIn'])) {
 
       if ($password === $storedPassword) {
          $_SESSION['admin_user'] = $aemail;
-         header("location: admin-dashboard.php");
+         header("location: ../admin-dashboard.php");
          exit();
       } else {
          $login_error = "Invalid email or password";
@@ -44,7 +45,7 @@ if (isset($_POST['signIn'])) {
 
          if (password_verify($password, $storedPassword)) {
             $_SESSION['login_user'] = $aemail;
-            header("location: dashboard.php");
+            header("location: ../dashboard.php");
             exit();
          } else {
             $login_error = "Invalid email or password";
@@ -61,7 +62,7 @@ if (isset($_POST['signIn'])) {
 
 <?php
 $page_title = "Sign In";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
       <section class="login-content">
          <div class="container">
@@ -99,7 +100,7 @@ require_once 'includes/header.php';
                                           </div>
                                        </div>
                                        <div class="col-lg-6">
-                                          <a href="auth-recoverpw.php" class="text-primary float-right">Forgot
+                                          <a href="recover-password.php" class="text-primary float-right">Forgot
                                              Password?</a>
                                        </div>
                                     </div>
@@ -111,13 +112,13 @@ require_once 'includes/header.php';
                                     <button type="submit" name="signIn" id="signIn" class="btn btn-primary">Sign
                                        In</button>
                                     <p class="mt-3">
-                                       Create an Account <a href="auth-sign-up.php" class="text-primary">Sign Up</a>
+                                       Create an Account <a href="sign-up.php" class="text-primary">Sign Up</a>
                                     </p>
                                  </form>
                               </div>
                            </div>
                            <div class="col-lg-5 content-right">
-                              <img src="assets/images/login/01.png" class="img-fluid image-right" alt="">
+                              <img src="<?php echo $path_prefix; ?>assets/images/login/01.png" class="img-fluid image-right" alt="">
                            </div>
                         </div>
                      </div>
@@ -128,4 +129,4 @@ require_once 'includes/header.php';
       </section>
    </div>
 
-   <?php require_once 'includes/scripts.php'; ?>
+   <?php require_once $path_prefix . 'includes/scripts.php'; ?>

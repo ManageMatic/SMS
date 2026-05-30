@@ -1,12 +1,13 @@
 <?php
 session_start();
+$path_prefix = "../";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'includes/PHPMailer/src/Exception.php';
-require 'includes/PHPMailer/src/PHPMailer.php';
-require 'includes/PHPMailer/src/SMTP.php';
+require $path_prefix . 'includes/PHPMailer/src/Exception.php';
+require $path_prefix . 'includes/PHPMailer/src/PHPMailer.php';
+require $path_prefix . 'includes/PHPMailer/src/SMTP.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
    $conn = mysqli_connect(hostname: "localhost", username: "root", password: "", database: "sms");
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
          $mail->Body = 'Your OTP for password reset is: ' . $otp;
 
          $mail->send();
-         header("Location: otp-verification.php");
+         header("Location: verify-otp.php");
          exit();
       } catch (Exception $e) {
          $error_message = "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
@@ -66,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
 <?php
 $page_title = "Recover Password";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
       <section class="login-content">
          <div class="container">
@@ -101,7 +102,7 @@ require_once 'includes/header.php';
                               </div>
                            </div>
                            <div class="col-lg-5 content-right">
-                              <img src="assets/images/login/01.png" class="img-fluid image-right" alt="">
+                              <img src="<?php echo $path_prefix; ?>assets/images/login/01.png" class="img-fluid image-right" alt="">
                            </div>
                         </div>
                      </div>
@@ -111,4 +112,4 @@ require_once 'includes/header.php';
          </div>
       </section>
    </div>
-   <?php require_once 'includes/scripts.php'; ?>
+   <?php require_once $path_prefix . 'includes/scripts.php'; ?>

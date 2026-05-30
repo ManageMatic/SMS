@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "";
+require_once $path_prefix . 'includes/config.php';
 
 $name = '';
 $store_name = '';
@@ -34,11 +35,11 @@ if (isset($_SESSION['login_user'])) {
 
 <?php
 $page_title = "User Profile";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
@@ -47,7 +48,7 @@ require_once 'includes/header.php';
                             <div class="card-body p-0">
                                 <div class="profile-image position-relative">
                                     <a href="#" id="uploadTrigger">
-                                        <img src="assets/images/page-img/profile.png" class="img-fluid rounded w-100"
+                                        <img src="<?php echo $path_prefix; ?>assets/images/page-img/profile.png" class="img-fluid rounded w-100"
                                             alt="profile-image">
                                     </a>
                                     <input type="file" name="image" id="profileImage" accept="image/*"
@@ -70,7 +71,7 @@ require_once 'includes/header.php';
                                     <div class="profile-img position-relative">
                                         <div class="profile-img mb-3">
                                             <a href="#" id="upload">
-                                                <img id="profile-image" src="assets/images/user/1.png"
+                                                <img id="profile-image" src="<?php echo $path_prefix; ?>assets/images/user/1.png"
                                                     class="img-fluid rounded" alt="profile-image">
                                             </a>
                                         </div>
@@ -178,5 +179,5 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

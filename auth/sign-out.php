@@ -4,6 +4,6 @@ session_start();
 $_SESSION = array();
 
 session_destroy();
-header("Location: auth-sign-in.php");
+header("Location: sign-in.php");
 exit();
 ?>

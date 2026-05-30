@@ -3,12 +3,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dashboard.php';
+$dashboard_link = isset($_SESSION['admin_user']) ? $path_prefix . 'admin-dashboard.php' : $path_prefix . 'dashboard.php';
 ?>
 <div class="iq-sidebar sidebar-default">
     <div class="iq-sidebar-logo d-flex align-items-center justify-content-between">
         <a href="<?php echo $dashboard_link; ?>" class="header-logo">
-            <img src="assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
+            <img src="<?php echo $path_prefix; ?>assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
             <h5 class="logo-title light-logo ml-3">ManageMatic</h5>
         </a>
         <div class="iq-menu-bt-sidebar ml-0">
@@ -28,7 +28,7 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         <span class="ml-4">Dashboards</span>
                     </a>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'product') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'product') !== false || strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? 'active' : ''; ?>">
                     <a href="#product" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="9" cy="21" r="1"></circle>
@@ -42,19 +42,19 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="product" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'product-list.php') ? 'active' : ''; ?>">
-                            <a href="product-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>products/list.php">
                                 <i class="las la-minus"></i><span>List Product</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'product-add.php') ? 'active' : ''; ?>">
-                            <a href="product-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/products/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>products/add.php">
                                 <i class="las la-minus"></i><span>Add Product</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'category') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'category') !== false || strpos($_SERVER['PHP_SELF'], '/categories/') !== false) ? 'active' : ''; ?>">
                     <a href="#category" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash3" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -67,19 +67,19 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="category" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'category-list.php') ? 'active' : ''; ?>">
-                            <a href="category-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/categories/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>categories/list.php">
                                 <i class="las la-minus"></i><span>List Category</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'category-add.php') ? 'active' : ''; ?>">
-                            <a href="category-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/categories/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>categories/add.php">
                                 <i class="las la-minus"></i><span>Add Category</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'sale') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'sale') !== false || strpos($_SERVER['PHP_SELF'], '/sales/') !== false) ? 'active' : ''; ?>">
                     <a href="#sale" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash4" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
@@ -92,19 +92,19 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="sale" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'sale-list.php') ? 'active' : ''; ?>">
-                            <a href="sale-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/sales/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>sales/list.php">
                                 <i class="las la-minus"></i><span>List Sale</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'sale-add.php') ? 'active' : ''; ?>">
-                            <a href="sale-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/sales/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>sales/add.php">
                                 <i class="las la-minus"></i><span>Add Sale</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'purchase') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'purchase') !== false || strpos($_SERVER['PHP_SELF'], '/purchases/') !== false) ? 'active' : ''; ?>">
                     <a href="#purchase" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash5" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
@@ -117,19 +117,19 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="purchase" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'purchase-list.php') ? 'active' : ''; ?>">
-                            <a href="purchase-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/purchases/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>purchases/list.php">
                                 <i class="las la-minus"></i><span>List Purchases</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'purchase-add.php') ? 'active' : ''; ?>">
-                            <a href="purchase-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/purchases/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>purchases/add.php">
                                 <i class="las la-minus"></i><span>Add purchase</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'return') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'return') !== false || strpos($_SERVER['PHP_SELF'], '/returns/') !== false) ? 'active' : ''; ?>">
                     <a href="#return" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash6" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="4 14 10 14 10 20"></polyline>
@@ -144,19 +144,19 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="return" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'return-list.php') ? 'active' : ''; ?>">
-                            <a href="return-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/returns/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>returns/list.php">
                                 <i class="las la-minus"></i><span>List Returns</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'return-add.php') ? 'active' : ''; ?>">
-                            <a href="return-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/returns/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>returns/add.php">
                                 <i class="las la-minus"></i><span>Add Return</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'customer') !== false || strpos(basename($_SERVER['PHP_SELF']), 'supplier') !== false) ? 'active' : ''; ?>">
+                <li class="<?php echo (strpos(basename($_SERVER['PHP_SELF']), 'customer') !== false || strpos(basename($_SERVER['PHP_SELF']), 'supplier') !== false || strpos($_SERVER['PHP_SELF'], '/customers/') !== false || strpos($_SERVER['PHP_SELF'], '/suppliers/') !== false) ? 'active' : ''; ?>">
                     <a href="#people" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash8" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -171,29 +171,29 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="people" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'customer-list.php') ? 'active' : ''; ?>">
-                            <a href="customer-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/customers/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>customers/list.php">
                                 <i class="las la-minus"></i><span>Customers</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'customer-add.php') ? 'active' : ''; ?>">
-                            <a href="customer-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/customers/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>customers/add.php">
                                 <i class="las la-minus"></i><span>Add Customers</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'supplier-list.php') ? 'active' : ''; ?>">
-                            <a href="supplier-list.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'list.php' && strpos($_SERVER['PHP_SELF'], '/suppliers/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>suppliers/list.php">
                                 <i class="las la-minus"></i><span>Suppliers</span>
                             </a>
                         </li>
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'supplier-add.php') ? 'active' : ''; ?>">
-                            <a href="supplier-add.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'add.php' && strpos($_SERVER['PHP_SELF'], '/suppliers/') !== false) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>suppliers/add.php">
                                 <i class="las la-minus"></i><span>Add Suppliers</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'user-profile.php' || basename($_SERVER['PHP_SELF']) == 'update-profile.php') ? 'active' : ''; ?>">
+                <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php' || basename($_SERVER['PHP_SELF']) == 'update-profile.php' || basename($_SERVER['PHP_SELF']) == 'user-list.php' || basename($_SERVER['PHP_SELF']) == 'user-add.php') ? 'active' : ''; ?>">
                     <a href="#user" class="collapsed" data-toggle="collapse" aria-expanded="false">
                         <svg class="svg-icon" id="p-dash10" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -207,25 +207,25 @@ $dashboard_link = isset($_SESSION['admin_user']) ? 'admin-dashboard.php' : 'dash
                         </svg>
                     </a>
                     <ul id="user" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'user-profile.php') ? 'active' : ''; ?>">
-                            <a href="user-profile.php">
+                        <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'profile.php') ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>profile.php">
                                 <i class="las la-minus"></i><span>User Profile</span>
                             </a>
                         </li>
                         <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'user-list.php') ? 'active' : ''; ?>">
-                            <a href="user-list.php">
+                            <a href="<?php echo $path_prefix; ?>user-list.php">
                                 <i class="las la-minus"></i><span>User List</span>
                             </a>
                         </li>
                         <li class="<?php echo (basename($_SERVER['PHP_SELF']) == 'user-add.php') ? 'active' : ''; ?>">
-                            <a href="user-add.php">
+                            <a href="<?php echo $path_prefix; ?>user-add.php">
                                 <i class="las la-minus"></i><span>User Add</span>
                             </a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="examples/page-report.html" class="">
+                    <a href="<?php echo $path_prefix; ?>examples/page-report.html" class="">
                         <svg class="svg-icon" id="p-dash7" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>

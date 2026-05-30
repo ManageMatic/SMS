@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset ($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -18,7 +19,7 @@ if (isset ($_SESSION['login_user'])) {
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM sale WHERE UID = ?";
+    $sql = "SELECT * FROM supplier WHERE UID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -51,7 +52,7 @@ if (isset ($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM sale";
+    $sql = "SELECT * FROM supplier";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -69,25 +70,25 @@ if (isset ($_SESSION['login_user'])) {
 ?>
 
 <?php
-$page_title = "List Sale";
-require_once 'includes/header.php';
+$page_title = "Suppliers List";
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
                             <div>
-                                <h4 class="mb-3">Sale List</h4>
-                                <p class="mb-0">Sales enables you to effectively control sales KPIs and monitor them in
-                                    one central<br>
-                                    place while helping teams to reach sales goals. </p>
+                                <h4 class="mb-3">Suppliers List</h4>
+                                <p class="mb-0">Create and manage your vendor list, send and receive purchase orders –
+                                    your online<br>
+                                    Dashboard is your new back of house.</p>
                             </div>
-                            <a href="sale-add.php" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Add Sale</a>
+                            <a href="add.php" class="btn btn-primary add-list"><i
+                                    class="las la-plus mr-3"></i>Add Supplier</a>
                         </div>
                     </div>
                     <div class="col-lg-12">
@@ -101,14 +102,13 @@ require_once 'includes/header.php';
                                                 <label for="checkbox1" class="mb-0"></label>
                                             </div>
                                         </th>
-                                        <th>Date</th>
-                                        <th>Product</th>
-                                        <th>Customer</th>
-                                        <th>Total</th>
-                                        <th>Paid</th>
-                                        <th>Status</th>
-                                        <th>Biller</th>
-                                        <th>Tax</th>
+                                        <th>Company Name</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone No.</th>
+                                        <th>City</th>
+                                        <th>Country</th>
+                                        <th>GST No</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -123,32 +123,24 @@ require_once 'includes/header.php';
                                         echo '<label for="checkbox2" class="mb-0"></label>';
                                         echo '</div>';
                                         echo '</td>';
-                                        echo '<td>' . $row['SLDATE'] . '</td>';
-                                        echo '<td>' . $row['SLPRODUCT'] . '</td>';
-                                        echo '<td>' . $row['SLCUSTOMER'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>' . $row['SLTOTALPAY'] . '</td>';
-                                        echo '<td>';
-                                        echo '<div class="badge badge-success">' . $row['SLPAYSTATUS'] . '</div>';
-                                        echo '</td>';
-                                        echo '<td>' . $row['SLBILLER'] . '</td>';
-                                        echo '<td>' . $row['SLTAX'] . '</td>';
+                                        echo '<td>' . $row['SPCOMPNAME'] . '</td>';
+                                        echo '<td>' . $row['SPNAME'] . '</td>';
+                                        echo '<td>' . $row['SPEMAIL'] . '</td>';
+                                        echo '<td>' . $row['SPNUMBER'] . '</td>';
+                                        echo '<td>' . $row['SPCITY'] . '</td>';
+                                        echo '<td>' . $row['SPCOUNTRY'] . '</td>';
+                                        echo '<td>' . $row['SPGST'] . '</td>';
                                         echo '<td>';
                                         echo '<div class="d-flex align-items-center list-action">';
-                                        echo '<a class="badge badge-info mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="View" href="#"><i
-                                            class="ri-eye-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-success mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Edit" href="#"><i
-                                            class="ri-pencil-line mr-0"></i></a>';
-                                        echo '<a class="badge bg-warning mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Delete"
-                                        href="#"><i class="ri-delete-bin-line mr-0"></i></a>';
+                                        echo '<a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View" href="#"><i class="ri-eye-line mr-0"></i></a>';
+                                        echo '<a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#"><i class="ri-pencil-line mr-0"></i></a>';
+                                        echo '<a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" href="#"><i class="ri-delete-bin-line mr-0"></i></a>';
                                         echo '</div>';
                                         echo '</td>';
                                         echo '</tr>';
                                     }
                                     echo '</tbody>';
+
                                     echo '</table>';
                                 } else {
                                     echo 'No data found';
@@ -162,5 +154,5 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

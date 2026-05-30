@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -21,7 +22,7 @@ if (isset($_SESSION['login_user'])) {
         $update_stmt->bind_param("ddii", $price, $cost, $product_id, $user_id);
 
         if ($update_stmt->execute()) {
-            header("Location: product-list.php");
+            header("Location: list.php");
             exit();
         } else {
             $error_message = "Error: " . $update_stmt->error;

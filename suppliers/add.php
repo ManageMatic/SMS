@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -36,15 +37,14 @@ if (isset($_SESSION['login_user'])) {
         $insert_stmt->bind_param("isssssssss", $user_id, $spcompname, $spname, $spemail, $spnumber, $spgst, $spaddress, $spcity, $spstate, $spcountry);
 
         if ($insert_stmt->execute()) {
-            header("Location: supplier-list.php");
+            header("Location: list.php");
             exit();
         } else {
-            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
     }
 } else {
-    header("Location: auth-sign-in.php");
+    header("Location: " . $path_prefix . "auth/sign-in.php");
     exit();
 }
 
@@ -54,11 +54,11 @@ mysqli_close($conn);
 
 <?php
 $page_title = "Add Supplier";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid add-form-list">
                 <div class="row">
@@ -153,5 +153,5 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

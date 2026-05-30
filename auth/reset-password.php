@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
     $update_stmt->execute();
 
     if ($update_stmt->affected_rows > 0) {
-        header("Location: auth-sign-in.php");
+        header("Location: sign-in.php");
         exit();
     } else {
         $error_message = "Failed to update password. Please try again.";
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
 
 <?php
 $page_title = "Reset Password";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
         <section class="login-content">
             <div class="container">
@@ -80,7 +81,7 @@ require_once 'includes/header.php';
                                         </div>
                                     </div>
                                     <div class="col-lg-5 content-right">
-                                        <img src="assets/images/login/01.png" class="img-fluid image-right" alt="">
+                                        <img src="<?php echo $path_prefix; ?>assets/images/login/01.png" class="img-fluid image-right" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -90,4 +91,4 @@ require_once 'includes/header.php';
             </div>
         </section>
     </div>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

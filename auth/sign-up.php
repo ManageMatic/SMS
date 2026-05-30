@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 $signup_error = '';
 
@@ -38,7 +39,7 @@ if (isset($_POST['submitSignup'])) {
 
             if ($insert_stmt->execute()) {
                 $_SESSION['login_user'] = $storename;
-                header("location: auth-sign-in.php");
+                header("location: sign-in.php");
                 exit();
             } else {
                 $signup_error = "Error creating user. Please try again later.";
@@ -53,7 +54,7 @@ if (isset($_POST['submitSignup'])) {
 
 <?php
 $page_title = "Sign Up";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
         <section class="login-content">
             <div class="container">
@@ -134,7 +135,7 @@ require_once 'includes/header.php';
                                                 <button type="submit" class="btn btn-primary" name="submitSignup">Sign
                                                     Up</button>
                                                 <p class="mt-3">
-                                                    Already have an Account <a href="auth-sign-in.php"
+                                                    Already have an Account <a href="sign-in.php"
                                                         class="text-primary">Sign
                                                         In</a>
                                                 </p>
@@ -142,7 +143,7 @@ require_once 'includes/header.php';
                                         </div>
                                     </div>
                                     <div class="col-lg-5 content-right">
-                                        <img src="assets/images/login/01.png" class="img-fluid image-right" alt="">
+                                        <img src="<?php echo $path_prefix; ?>assets/images/login/01.png" class="img-fluid image-right" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -153,4 +154,4 @@ require_once 'includes/header.php';
         </section>
     </div>
 
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

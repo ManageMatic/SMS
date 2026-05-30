@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "";
+require_once $path_prefix . 'includes/config.php';
 
 $name = '';
 $store_name = '';
@@ -44,7 +45,7 @@ if (isset($_SESSION['login_user'])) {
         $update_stmt->execute();
 
         if ($update_stmt->affected_rows > 0) {
-            header("Location: user-profile.php");
+            header("Location: profile.php");
             exit();
         } else {
             $error_message = "Failed to update profile. Please try again.";
@@ -58,7 +59,7 @@ if (isset($_SESSION['login_user'])) {
 
 <?php
 $page_title = "Update Profile";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
         <div class="card-body">
             <div class="p-3">
@@ -115,4 +116,4 @@ require_once 'includes/header.php';
             </form>
         </div>
     </div>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

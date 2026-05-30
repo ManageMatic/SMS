@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -9,7 +10,7 @@ if (isset($_SESSION['login_user'])) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
-    $redirect_url = "dashboard.php";
+    $redirect_url = $path_prefix . "dashboard.php";
 
     $email = $_SESSION['login_user'];
     $fetch_query = "SELECT SID FROM store WHERE SEMAIL=?";
@@ -19,16 +20,6 @@ if (isset($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
-
-    /*$fetch_query1 = "SELECT STNAME FROM store WHERE SEMAIL=?";
-    $fetch_stmt = $conn->prepare($fetch_query1);
-    $fetch_stmt->execute();
-    $fetch_stmt->store_result();
-
-    if ($fetch_stmt->num_rows > 0) {
-        $fetch_stmt->bind_result($store_name);
-        $fetch_stmt->fetch();
-    }*/
 
     $sql = "SELECT * FROM product WHERE UID = ?";
     $stmt = $conn->prepare($sql);
@@ -54,7 +45,7 @@ if (isset($_SESSION['login_user'])) {
     }
 
     $is_admin = isset($_SESSION['admin_user']);
-    $redirect_url = "../backend/admin-dashboard.php";
+    $redirect_url = $path_prefix . "admin-dashboard.php";
 
     $email = $_SESSION['admin_user'];
     $fetch_query = "SELECT ANAME, AEMAIL FROM admin WHERE AEMAIL=?";
@@ -97,7 +88,7 @@ if (isset($_POST["save"])) {
     $sql = "UPDATE product SET PPRICE = '$newPrice', PCOST = '$newCost' WHERE PID = $id";
 
     if (mysqli_query($conn, $sql)) {
-        header("Location:product-list.php");
+        header("Location: list.php");
     } else {
         echo "Error updating record: " . mysqli_error($conn);
     }
@@ -120,7 +111,7 @@ if (isset($_POST["delete"])) {
     $sql = "DELETE FROM `product` WHERE `product`.`PID` = $id";
 
     if (mysqli_query($conn, $sql)) {
-        header("Location:product-list.php");
+        header("Location: list.php");
     } else {
         echo "Error updating record: " . mysqli_error($conn);
     }
@@ -130,11 +121,11 @@ if (isset($_POST["delete"])) {
 
 <?php
 $page_title = "Product List";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
@@ -145,7 +136,7 @@ require_once 'includes/header.php';
                                 <p class="mb-0">The product list effectively dictates product presentation and provides
                                     space<br> to list your products and offering in the most appealing way.</p>
                             </div>
-                            <a href="product-add.php" class="btn btn-primary add-list"><i
+                            <a href="add.php" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Product</a>
                         </div>
                     </div>
@@ -181,7 +172,7 @@ require_once 'includes/header.php';
                                                                 Price
                                                                 and
                                                                 Cost!</h4>
-                                                            <form method="post" action="product-edit.php">
+                                                            <form method="post" action="edit.php">
                                                                 <div class="content create-workform bg-body">
                                                                     <div class="pb-3">
                                                                         <label class="mb-2">Price *</label>
@@ -229,9 +220,6 @@ require_once 'includes/header.php';
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <!--<div class="d-flex align-items-center">
-                                        <img src="' . $row['PIMAGE'] . '" class="img-fluid rounded avatar-50 mr-3" alt="image">
-                                        <div>-->
                                                     <?php echo $row['PNAME']; ?>
                                 </div>
                             </div>
@@ -250,7 +238,7 @@ require_once 'includes/header.php';
                                     </a>
                                     <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title=""
                                         data-original-title="Delete"
-                                        href="product-delete.php?product_id=<?php echo $product_id; ?>"><i
+                                        href="delete.php?product_id=<?php echo $row['PID']; ?>"><i
                                             class="ri-delete-bin-line mr-0"></i></a>
                                 </div>
                             </td>
@@ -294,5 +282,5 @@ require_once 'includes/header.php';
     </div>
     </div>
 
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

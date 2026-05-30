@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset ($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -18,7 +19,7 @@ if (isset ($_SESSION['login_user'])) {
     $fetch_stmt->bind_result($user_id);
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM customer WHERE UID = ?";
+    $sql = "SELECT * FROM purchase WHERE UID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
@@ -51,7 +52,7 @@ if (isset ($_SESSION['login_user'])) {
     $fetch_stmt->store_result();
     $fetch_stmt->fetch();
 
-    $sql = "SELECT * FROM customer";
+    $sql = "SELECT * FROM purchase";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -69,25 +70,25 @@ if (isset ($_SESSION['login_user'])) {
 ?>
 
 <?php
-$page_title = "Customers List";
-require_once 'includes/header.php';
+$page_title = "List Purchase";
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
                             <div>
-                                <h4 class="mb-3">Customer List</h4>
-                                <p class="mb-0">A customer dashboard lets you easily gather and visualize customer data
-                                    from optimizing <br>
-                                    the customer experience, ensuring customer retention. </p>
+                                <h4 class="mb-3">Purchase List</h4>
+                                <p class="mb-0">A purchase dashboard enables purchasing manager to efficiently track,
+                                    evaluate, <br>
+                                    and optimize all acquisition processes within a company.</p>
                             </div>
-                            <a href="customer-add.php" class="btn btn-primary add-list"><i
-                                    class="las la-plus mr-3"></i>Add Customer</a>
+                            <a href="add.php" class="btn btn-primary add-list"><i
+                                    class="las la-plus mr-3"></i>Add Purchase</a>
                         </div>
                     </div>
                     <div class="col-lg-12">
@@ -101,12 +102,13 @@ require_once 'includes/header.php';
                                                 <label for="checkbox1" class="mb-0"></label>
                                             </div>
                                         </th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone No.</th>
-                                        <th>Address</th>
-                                        <th>City</th>
-                                        <th>State</th>
+                                        <th>Date</th>
+                                        <th>Product</th>
+                                        <th>Supplier</th>
+                                        <th>Purchase Status</th>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <th>Payment Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -121,12 +123,17 @@ require_once 'includes/header.php';
                                         echo '<label for="checkbox2" class="mb-0"></label>';
                                         echo '</div>';
                                         echo '</td>';
-                                        echo '<td>' . $row['CSTNAME'] . '</td>';
-                                        echo '<td>' . $row['CSTEMAIL'] . '</td>';
-                                        echo '<td>' . $row['CSTNUM'] . '</td>';
-                                        echo '<td>' . $row['CSTADDRESS'] . '</td>';
-                                        echo '<td>' . $row['CSTCITY'] . '</td>';
-                                        echo '<td>' . $row['CSTSTATE'] . '</td>';
+                                        echo '<td>' . $row['PRDATE'] . '</td>';
+                                        echo '<td>' . $row['PRPRODUCT'] . '</td>';
+                                        echo '<td>' . $row['PRSUPPLIER'] . '</td>';
+                                        echo '<td>';
+                                        echo '<div class="badge badge-success">' . $row['PRRECEIVE'] . '</div>';
+                                        echo '</td>';
+                                        echo '<td>' . $row['PRPAYMENT'] . '</td>';
+                                        echo '<td>' . $row['PRPAYMENT'] . '</td>';
+                                        echo '<td>';
+                                        echo '<div class="badge badge-warning">' . $row['PRPAYSTATUS'] . '</div>';
+                                        echo '</td>';
                                         echo '<td>';
                                         echo '<div class="d-flex align-items-center list-action">';
                                         echo '<a class="badge badge-info mr-2" data-toggle="tooltip"
@@ -157,5 +164,5 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

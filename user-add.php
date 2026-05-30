@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "";
+require_once $path_prefix . 'includes/config.php';
 
 $admin_name = '';
 $admin_email = '';
@@ -68,10 +69,10 @@ if (isset($_POST['add'])) {
 
 <?php
 $page_title = "Add User";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="col-sm-12">
@@ -142,5 +143,5 @@ require_once 'includes/header.php';
         </div>
     </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

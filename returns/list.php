@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset ($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -70,11 +71,11 @@ if (isset ($_SESSION['login_user'])) {
 
 <?php
 $page_title = "Returns List";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
 
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid">
                 <div class="row">
@@ -85,7 +86,7 @@ require_once 'includes/header.php';
                                 <p class="mb-0">Returns dashboard shows the graphical representation of the channel
                                     and Reference <br>wise returns with the comparison to the total units sold..</p>
                             </div>
-                            <a href="return-add.php" class="btn btn-primary add-list"><i
+                            <a href="add.php" class="btn btn-primary add-list"><i
                                     class="las la-plus mr-3"></i>Add Returns</a>
                         </div>
                     </div>
@@ -154,6 +155,6 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
     <!-- Backend Bundle JavaScript -->
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>

@@ -1,5 +1,7 @@
 <?php
-require_once 'includes/config.php';
+session_start();
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -24,7 +26,7 @@ if (isset($_SESSION['login_user'])) {
             $delete_stmt = $conn->prepare($delete_query);
             $delete_stmt->bind_param("ii", $product_id, $user_id);
             if ($delete_stmt->execute()) {
-                header("Location: product-list.php");
+                header("Location: list.php");
                 exit();
             } else {
                 echo "Error deleting product";

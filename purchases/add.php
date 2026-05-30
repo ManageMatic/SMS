@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+$path_prefix = "../";
+require_once $path_prefix . 'includes/config.php';
 
 if (isset($_SESSION['login_user'])) {
     $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
@@ -46,27 +47,19 @@ if (isset($_SESSION['login_user'])) {
             $update_stmt->bind_param("is", $quantity, $purchase_product);
 
             if ($update_stmt->execute()) {
-
-                if (!$_SERVER['PNAME']) {
-                    $update_query = "UPDATE product SET PNAME = ? WHERE PID = ?";
-                    $update_stmt = $conn->prepare($update_query);
-                    $update_stmt->bind_param("si", $purchase_product, $product_id);
-                }
                 echo "Product quantity updated.";
             } else {
-                header("Location: pages-error.html");
                 echo "Error: " . $update_stmt->error;
             }
-            header("Location: purchase-list.php");
+            header("Location: list.php");
             exit();
         } else {
-            header("Location: pages-error.html");
             echo "Error: " . $insert_stmt->error;
         }
 
     }
 } else {
-    header("Location: auth-sign-in.php");
+    header("Location: " . $path_prefix . "auth/sign-in.php");
     exit();
 }
 mysqli_close($conn);
@@ -74,10 +67,10 @@ mysqli_close($conn);
 
 <?php
 $page_title = "Add Purchase";
-require_once 'includes/header.php';
+require_once $path_prefix . 'includes/header.php';
 ?>
-        <?php require_once 'includes/sidebar.php'; ?>
-<?php require_once 'includes/navbar.php'; ?>
+        <?php require_once $path_prefix . 'includes/sidebar.php'; ?>
+<?php require_once $path_prefix . 'includes/navbar.php'; ?>
 <div class="content-page">
             <div class="container-fluid add-form-list">
                 <div class="row">
@@ -201,5 +194,5 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-    <?php require_once 'includes/footer.php'; ?>
-    <?php require_once 'includes/scripts.php'; ?>
+    <?php require_once $path_prefix . 'includes/footer.php'; ?>
+    <?php require_once $path_prefix . 'includes/scripts.php'; ?>
