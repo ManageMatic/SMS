@@ -4,12 +4,12 @@ session_start();
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'D:/PHPMailer-master/src/Exception.php';
-require 'D:/PHPMailer-master/src/PHPMailer.php';
-require 'D:/PHPMailer-master/src/SMTP.php';
+require 'C:/xampp/htdocs/SMS/PHPMailer-master/src/Exception.php';
+require 'C:/xampp/htdocs/SMS/PHPMailer-master/src/PHPMailer.php';
+require 'C:/xampp/htdocs/SMS/PHPMailer-master/src/SMTP.php';
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-   $conn = mysqli_connect("localhost", "root", "", "storemanagement");
+   $conn = mysqli_connect(hostname: "localhost", username: "root", password: "", database: "sms");
 
    if (!$conn) {
       die("Connection failed:" . mysqli_connect_error());

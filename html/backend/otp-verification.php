@@ -2,7 +2,7 @@
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['submit'])) {
-    $conn = mysqli_connect("localhost", "root", "", "storemanagement");
+    $conn = mysqli_connect("localhost", "root", "", "sms");
 
     if (!$conn) {
         die("Connection failed:" . mysqli_connect_error());
